@@ -172,6 +172,9 @@ Style/FrozenStringLiteralComment:
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#magic-comments
   Enabled: false
 
+Style/EmptyMethod:
+  Enabled: false
+
 Style/SingleLineMethods:
   Description: Avoid single-line methods.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#no-single-line-methods

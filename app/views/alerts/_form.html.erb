@@ -1,0 +1,52 @@
+<%= form_with(model: alert, local: true) do |form| %>
+  <% if alert.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(alert.errors.count, "error") %> prohibited this alert from being saved:</h2>
+
+      <ul>
+      <% alert.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :uuid %>
+    <%= form.text_field :uuid %>
+  </div>
+
+  <div class="field">
+    <%= form.label :title %>
+    <%= form.text_field :title %>
+  </div>
+
+  <div class="field">
+    <%= form.label :location %>
+    <%= form.text_field :location %>
+  </div>
+
+  <div class="field">
+    <%= form.label :message %>
+    <%= form.text_area :message %>
+  </div>
+
+  <div class="field date">
+    <%= form.label :publish_at %>
+    <%= form.text_field :publish_at %>
+  </div>
+
+  <div class="field date">
+    <%= form.label :effective_at %>
+    <%= form.text_field :effective_at %>
+  </div>
+
+  <div class="field date">
+    <%= form.label :expires_at %>
+    <%= form.text_field :expires_at %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

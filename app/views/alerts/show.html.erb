@@ -1,0 +1,41 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Alert</h1>
+
+<p>
+  <strong>Uuid:</strong>
+  <%= @alert.uuid %>
+</p>
+
+<p>
+  <strong>Title:</strong>
+  <%= @alert.title %>
+</p>
+
+<p>
+  <strong>Location:</strong>
+  <%= @alert.location %>
+</p>
+
+<p>
+  <strong>Message:</strong>
+  <%= @alert.message %>
+</p>
+
+<p>
+  <strong>Publish at:</strong>
+  <%= @alert.publish_at %>
+</p>
+
+<p>
+  <strong>Effective at:</strong>
+  <%= @alert.effective_at %>
+</p>
+
+<p>
+  <strong>Expires at:</strong>
+  <%= @alert.expires_at %>
+</p>
+
+<%= link_to 'Edit', edit_alert_path(@alert) %> |
+<%= link_to 'Back', alerts_path %>
