@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 describe AlertsController, type: :controller do
-  let(:valid_attributes) { { uuid: 'uuid', title: 'title', location: 'location' } }
-  let(:invalid_attributes) { { uuid: nil, title: nil, location: nil } }
+  let(:valid_attributes) { { uuid: 'uuid', title: 'title', location: 'location', publish_at: '2018-12-11 02:24:00-0800' } }
+  let(:invalid_attributes) { { uuid: nil, title: nil, location: nil, publish_at: nil } }
   let(:valid_session) { {} }
 
   describe "GET #index" do

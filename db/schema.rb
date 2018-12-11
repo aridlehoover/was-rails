@@ -16,11 +16,11 @@ ActiveRecord::Schema.define(version: 2018_12_11_095317) do
   enable_extension "plpgsql"
 
   create_table "alerts", force: :cascade do |t|
-    t.string "uuid"
-    t.string "title"
-    t.string "location"
+    t.string "uuid", null: false
+    t.string "title", null: false
+    t.string "location", null: false
     t.text "message"
-    t.datetime "publish_at"
+    t.datetime "publish_at", null: false
     t.datetime "effective_at"
     t.datetime "expires_at"
     t.datetime "created_at", null: false
@@ -29,17 +29,19 @@ ActiveRecord::Schema.define(version: 2018_12_11_095317) do
   end
 
   create_table "recipients", force: :cascade do |t|
-    t.string "channel"
-    t.string "address"
+    t.string "channel", null: false
+    t.string "address", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["channel", "address"], name: "index_recipients_on_channel_and_address", unique: true
   end
 
   create_table "sources", force: :cascade do |t|
-    t.string "channel"
-    t.string "address"
+    t.string "channel", null: false
+    t.string "address", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["channel", "address"], name: "index_sources_on_channel_and_address", unique: true
   end
 
 end
