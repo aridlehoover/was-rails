@@ -1,4 +1,9 @@
-[![Build Status](https://travis-ci.com/aridlehoover/was-rails.svg?branch=master)](https://travis-ci.com/aridlehoover/was-rails)
+[![Build Status](https://travis-ci.com/aridlehoover/was-rails.svg?branch=master)](https://travis-ci.com/aridlehoover/was-rails) 
+
+[![Maintainability](https://api.codeclimate.com/v1/badges/0a5e9939cb8c216913e9/maintainability)](https://codeclimate.com/github/aridlehoover/was-rails/maintainability) 
+
+[![Test Coverage](https://api.codeclimate.com/v1/badges/0a5e9939cb8c216913e9/test_coverage)](https://codeclimate.com/github/aridlehoover/was-rails/test_coverage)
+
 
 # Weather Alert System - Rails
 
