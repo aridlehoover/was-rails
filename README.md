@@ -1,12 +1,11 @@
-# Weather Alert System
+# Weather Alert System - Rails
 
-This Weather Alert System is a simple application that demonstrates <br>
-how business/domain logic is often spread across multiple classes <br>
-when developing applications The Rails Way™.
+This is a sample Weather Alert System. `Alerts` are weather bulletins
+derived from `Sources` and broadcast to `Recipients`.
 
-# Domain
-
-Alerts are bulletins derived from Sources, and broadcast to Recipients.
+The purpose of this application is to demonstrate how The Rails Way™
+obscures business/domain logic, making it difficult to know what an
+application is doing and where it is doing it.
 
 # Backlog
 
