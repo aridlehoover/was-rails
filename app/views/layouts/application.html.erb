@@ -11,5 +11,10 @@
 
   <body>
     <%= yield %>
+
+    <% unless request.path == '/' %>
+      |
+      <%= link_to 'Home', '/' %>
+    <% end %>
   </body>
 </html>

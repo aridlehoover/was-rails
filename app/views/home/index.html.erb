@@ -1,0 +1,27 @@
+<h1>Weather Alert System</h1>
+
+<p>
+  This Weather Alert System is a simple application that demonstrates how<br>
+  business/domain logic is often spread across models and controllers when<br>
+  developing applications The Rails Way™.
+</p>
+
+<h2>Actions</h2>
+
+<table>
+  <tr>
+    <td>Alerts</td>
+    <td><%= link_to 'View', alerts_path %></td>
+    <td><%= link_to 'New', new_alert_path %></td>
+  </tr>
+  <tr>
+    <td>Recipients</td>
+    <td><%= link_to 'View', recipients_path %></td>
+    <td><%= link_to 'New', new_recipient_path %></td>
+  </tr>
+  <tr>
+    <td>Sources</td>
+    <td><%= link_to 'View', sources_path %></td>
+    <td><%= link_to 'New', new_source_path %></td>
+  </tr>
+</table>
