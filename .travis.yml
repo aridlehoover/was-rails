@@ -1,1 +1,5 @@
 language: ruby
+services:
+  - postgresql
+before_script:
+  - psql -c 'create database was-rails_test;' -U postgres
