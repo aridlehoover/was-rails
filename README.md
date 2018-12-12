@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/aridlehoover/was-rails.svg?branch=master)](https://travis-ci.com/aridlehoover/was-rails)
+
 # Weather Alert System - Rails
 
 This is a sample Weather Alert System. `Alerts` are weather bulletins
@@ -7,7 +9,7 @@ The purpose of this application is to demonstrate how The Rails Way™
 obscures business/domain logic, making it difficult to know what an
 application is doing and where it is doing it.
 
-# Backlog
+## Backlog
 
 As an administrator,
 In order to rapidly notify recipients of important weather news,
