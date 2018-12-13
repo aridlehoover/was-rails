@@ -1,6 +1,6 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/0a5e9939cb8c216913e9/maintainability)](https://codeclimate.com/github/aridlehoover/was-rails/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/0a5e9939cb8c216913e9/test_coverage)](https://codeclimate.com/github/aridlehoover/was-rails/test_coverage) [![Build Status](https://travis-ci.com/aridlehoover/was-rails.svg?branch=master)](https://travis-ci.com/aridlehoover/was-rails)
 
-# Weather Alert System - Rails
+# Weather Alert System - The Rails Way™
 
 This is a sample Weather Alert System. `Alerts` are weather bulletins
 derived from `Sources` and broadcast to `Recipients`.
