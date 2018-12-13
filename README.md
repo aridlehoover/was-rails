@@ -15,7 +15,7 @@ As an administrator,
 In order to rapidly notify recipients of important weather news,
 I want to...
 
-* Automatically notify all Recipients upon Alert creation
+* Automatically notify all Recipients upon Alert creation ✅
 * Automatically notify new Recipient of latest Alert upon Recipient creation
 * Automatically notify all Recipients upon Alert publication
 * Manually notify all Recipients of a specific Alert
@@ -35,7 +35,7 @@ As an administrator,
 In order to reach people where they are paying attention,
 I want to...
 
-* Notify Recipients via SMS
+* Notify Recipients via SMS ✅
 * Notify Recipients via RSS
 * Notify Recipients via Twitter
 * Notify Recipients via Facebook Messenger
