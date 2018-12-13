@@ -8,6 +8,23 @@ describe Recipient, type: :model do
     it { is_expected.to validate_presence_of(:address) }
   end
 
+  describe 'after create' do
+    let(:published_alerts) { [first_published_alert, last_published_alert] }
+    let(:first_published_alert) { instance_double(Alert) }
+    let(:last_published_alert) { instance_double(Alert) }
+
+    before do
+      allow(Alert).to receive(:published).and_return(published_alerts)
+      allow(NotifyRecipientOfLastPublishedAlertJob).to receive(:perform_later)
+
+      recipient.save
+    end
+
+    it 'notifies the receipient of the latest published alert' do
+      expect(NotifyRecipientOfLastPublishedAlertJob).to have_received(:perform_later).with(recipient)
+    end
+  end
+
   describe '#notify' do
     subject(:notify) { recipient.notify(alert) }
 

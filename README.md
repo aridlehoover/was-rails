@@ -16,7 +16,7 @@ In order to rapidly notify recipients of important weather news,
 I want to...
 
 * Automatically notify all Recipients upon Alert creation ✅
-* Automatically notify new Recipient of latest Alert upon Recipient creation
+* Automatically notify new Recipient of latest published Alert upon Recipient creation ✅
 * Automatically notify all Recipients upon Alert publication
 * Manually notify all Recipients of a specific Alert
 * Manually notify a specific Recipient of the latest Alert
