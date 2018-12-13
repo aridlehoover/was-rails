@@ -29,7 +29,7 @@ I want to...
 * Import Alerts from the NOAA Tsunamis RSS feed
 * Import Alerts from the USGS Earthquakes RSS feed
 * Import Alerts from a Twitter feed
-* Import Alerts from telemetry off a weather monitoring device via web sockets
+* Import Alerts from telemetry off a weather monitoring device
 
 As an administrator,
 In order to reach people where they are paying attention,
