@@ -29,7 +29,7 @@ I want to...
 * Import Alerts from the NOAA Tsunamis RSS feed
 * Import Alerts from the USGS Earthquakes RSS feed
 * Import Alerts from a Twitter feed
-* Import Alerts from telemetry off a weather monitoring device
+* Import Alerts from telemetry off a weather monitoring device via a queue
 
 As an administrator,
 In order to reach people where they are paying attention,
@@ -47,6 +47,7 @@ As an administrator,
 In order to notify as many people as possible,
 I want to...
 
-* Import a telecom's cell-phone database via CSV
+* Import a CSV file containing Recipient data
+* Import Recipient data from a queue
 * Import a Recipient's Twitter followers accounts
 * Import a Recipient's Facebook Messenger contacts
