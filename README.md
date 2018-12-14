@@ -25,7 +25,7 @@ As an administrator,
 In order to rapidly enter new alerts,
 I want to...
 
-* Import Alerts from the NWS Warnings RSS feed
+* Import Alerts from the NWS Warnings ATOM feed ✅
 * Import Alerts from the NOAA Tsunamis RSS feed
 * Import Alerts from the USGS Earthquakes RSS feed
 * Import Alerts from a Twitter feed
