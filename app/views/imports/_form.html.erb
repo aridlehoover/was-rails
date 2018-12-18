@@ -1,0 +1,27 @@
+<%= form_with(model: import, local: true) do |form| %>
+  <% if import.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(import.errors.count, "error") %> prohibited this import from being saved:</h2>
+
+      <ul>
+      <% import.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :import_type %>
+    <%= form.text_field :import_type %>
+  </div>
+
+  <div class="field">
+    <%= form.label :file %>
+    <%= form.file_field :file %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

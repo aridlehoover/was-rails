@@ -36,6 +36,7 @@ In order to reach people where they are paying attention,
 I want to...
 
 * Notify Recipients via SMS ✅
+* Notify Recipients via email
 * Notify Recipients via RSS
 * Notify Recipients via Twitter
 * Notify Recipients via Facebook Messenger
@@ -47,7 +48,7 @@ As an administrator,
 In order to notify as many people as possible,
 I want to...
 
-* Import a CSV file containing Recipient data
+* Import a CSV file containing Recipient data ✅
 * Import Recipient data from a queue
 * Import a Recipient's Twitter followers accounts
 * Import a Recipient's Facebook Messenger contacts
