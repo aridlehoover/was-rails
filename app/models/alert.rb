@@ -9,6 +9,12 @@ class Alert < ApplicationRecord
   after_create :notify_all_recipients
 
   def notify_all_recipients
-    NotifyAllRecipientsJob.perform_later(self)
+    NotifyAllRecipientsJob.set(wait_until: publish_at).perform_later(self) unless expired?
+  end
+
+  private
+
+  def expired?
+    expires_at.present? && expires_at < Time.current
   end
 end

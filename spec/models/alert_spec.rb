@@ -16,15 +16,32 @@ describe Alert, type: :model do
 
   describe 'after_create' do
     let(:recipients) { [instance_double(Recipient)] }
+    let(:job) { class_double(NotifyAllRecipientsJob, perform_later: true)}
 
     before do
-      allow(NotifyAllRecipientsJob).to receive(:perform_later)
+      allow(NotifyAllRecipientsJob).to receive(:set).and_return(job)
 
       alert.save
     end
 
-    it 'enqueues a job to notify all recipients' do
-      expect(NotifyAllRecipientsJob).to have_received(:perform_later).with(alert)
+    context 'when the alert has expired' do
+      let(:expires_at) { Time.current - 1.hour }
+
+      it 'does not enqueue a job to notify all recipients' do
+        expect(job).not_to have_received(:perform_later)
+      end
+    end
+
+    context 'when the alert has NOT expired' do
+      let(:expires_at) { Time.current + 1.hour }
+
+      it 'schedules the job at the publish at time' do
+        expect(NotifyAllRecipientsJob).to have_received(:set).with(wait_until: alert.publish_at)
+      end
+
+      it 'enqueues a job to notify all recipients' do
+        expect(job).to have_received(:perform_later).with(alert)
+      end
     end
   end
 
