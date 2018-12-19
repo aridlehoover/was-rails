@@ -18,8 +18,8 @@ I want to...
 * Automatically notify all Recipients upon Alert creation if published and not expired ✅
 * Automatically notify new Recipient of latest published Alert upon Recipient creation ✅
 * Automatically notify all Recipients upon Alert publication ✅
-* Manually notify all Recipients of a specific Alert
-* Manually notify a specific Recipient of the latest Alert
+* Manually notify all Recipients of a specific Alert ✅
+* Manually notify a specific Recipient of the latest Alert ✅
 
 As an administrator,
 In order to rapidly enter new alerts,

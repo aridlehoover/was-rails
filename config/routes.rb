@@ -4,4 +4,5 @@ Rails.application.routes.draw do
   resources :recipients
   resources :sources
   resources :imports, only: [:create, :new]
+  resources :notifications, only: [:create]
 end

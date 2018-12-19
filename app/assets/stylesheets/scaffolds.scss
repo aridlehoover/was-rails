@@ -50,10 +50,11 @@ td {
   vertical-align: top;
 
   &.text, &.date {
-    width: 100px;
+    width: 120px;
   }
+
   &.textarea {
-    width: 150px;
+    width: 300px;
   }
 }
 

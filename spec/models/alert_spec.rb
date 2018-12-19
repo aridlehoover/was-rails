@@ -16,7 +16,7 @@ describe Alert, type: :model do
 
   describe 'after_create' do
     let(:recipients) { [instance_double(Recipient)] }
-    let(:job) { class_double(NotifyAllRecipientsJob, perform_later: true)}
+    let(:job) { class_double(NotifyAllRecipientsJob, perform_later: true) }
 
     before do
       allow(NotifyAllRecipientsJob).to receive(:set).and_return(job)
