@@ -26,8 +26,8 @@ In order to rapidly enter new alerts,
 I want to...
 
 * Import Alerts from the NWS Warnings ATOM feed ✅
-* Import Alerts from the NOAA Tsunamis RSS feed
-* Import Alerts from the USGS Earthquakes RSS feed
+* Import Alerts from the USGS Earthquakes ATOM feed
+* Import Alerts from the NOAA Tsunami RSS feed
 * Import Alerts from a Twitter feed
 * Import Alerts from telemetry off a weather monitoring device via a queue
 
@@ -36,12 +36,12 @@ In order to reach people where they are paying attention,
 I want to...
 
 * Notify Recipients via SMS ✅
-* Notify Recipients via email
+* Notify Recipients via email ✅
+* Notify Recipients via Twitter ✅
+* Notify Recipients via Facebook Messenger ✅
+* Notify Recipients via WhatsApp ✅
+* Notify Recipients via Slack ✅
 * Notify Recipients via RSS
-* Notify Recipients via Twitter
-* Notify Recipients via Facebook Messenger
-* Notify Recipients via WhatsApp
-* Notify Recipients via Slack
 * Notify Recipients via the web site
 
 As an administrator,
