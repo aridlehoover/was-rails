@@ -35,109 +35,123 @@ describe Recipient, type: :model do
 
     context 'when the recpient channel is sms' do
       let(:channel) { 'sms' }
-      let(:sms_notifier) { instance_double(Notifiers::SMS, notify: true) }
+      let(:twilio_client) { instance_double(Twilio::REST::Client, api: api) }
+      let(:api) { instance_double('api', account: account) }
+      let(:account) { instance_double('account', messages: messages) }
+      let(:messages) { instance_double('messages', create: true) }
+      let(:twilio_account_sid) { 'twilio_account_sid' }
+      let(:twilio_auth_token) { 'twilio_auth_token' }
 
       before do
-        allow(Notifiers::SMS).to receive(:new).and_return(sms_notifier)
+        allow(Twilio::REST::Client).to receive(:new).and_return(twilio_client)
+        allow(ENV).to receive(:[]).with('TWILIO_ACCOUNT_SID').and_return(twilio_account_sid)
+        allow(ENV).to receive(:[]).with('TWILIO_AUTH_TOKEN').and_return(twilio_auth_token)
 
         notify
       end
 
-      it 'notifies the recipient of the alert' do
-        expect(sms_notifier).to have_received(:notify).with(
-          to: address,
-          message: alert.title
-        )
+      it 'instantiates Twilio REST client with correct values' do
+        expect(Twilio::REST::Client).to have_received(:new).with(twilio_account_sid, twilio_auth_token)
+      end
+
+      it 'notifies the receipient of the alert' do
+        expect(messages).to have_received(:create).with(from: '+14156897774', to: address, body: alert.title)
       end
     end
 
     context 'when the recpient channel is email' do
       let(:channel) { 'email' }
-      let(:email_notifier) { instance_double(Notifiers::Email, notify: true) }
+      let(:sendgrid_api_key) { 'sendgrid_api_key' }
 
       before do
-        allow(Notifiers::Email).to receive(:new).and_return(email_notifier)
+        allow(RestClient).to receive(:post)
+        allow(ENV).to receive(:[]).with('SENDGRID_API_KEY').and_return(sendgrid_api_key)
 
         notify
       end
 
       it 'notifies the recipient of the alert' do
-        expect(email_notifier).to have_received(:notify).with(
-          to: address,
-          message: alert.title
+        expect(RestClient).to have_received(:post).with(
+          'https://api.sendgrid.com/v3/mail/send',
+          {
+            to: [{ email: address }],
+            subject: 'Alert',
+            content: [{ value: alert.title, type: 'text/plain' }]
+          },
+          'Authorization' => "Bearer #{sendgrid_api_key}"
         )
       end
     end
 
     context 'when the recpient channel is twitter' do
       let(:channel) { 'twitter' }
-      let(:email_notifier) { instance_double(Notifiers::Twitter, notify: true) }
+      let(:twitter_client) { instance_double(Twitter::REST::Client, update: true) }
 
       before do
-        allow(Notifiers::Twitter).to receive(:new).and_return(email_notifier)
+        allow(Twitter::REST::Client).to receive(:new).and_return(twitter_client)
 
         notify
       end
 
       it 'notifies the recipient of the alert' do
-        expect(email_notifier).to have_received(:notify).with(
-          to: address,
-          message: alert.title
-        )
+        expect(twitter_client).to have_received(:update).with("#{address} - #{alert.title}")
       end
     end
 
     context 'when the recpient channel is Facebook Messenger' do
       let(:channel) { 'messenger' }
-      let(:email_notifier) { instance_double(Notifiers::Messenger, notify: true) }
+      let(:facebook_access_token) { 'facebook_access_token' }
 
       before do
-        allow(Notifiers::Messenger).to receive(:new).and_return(email_notifier)
+        allow(Facebook::Messenger::Bot).to receive(:deliver)
+        allow(ENV).to receive(:[]).with('FACEBOOK_ACCESS_TOKEN').and_return(facebook_access_token)
 
         notify
       end
 
       it 'notifies the recipient of the alert' do
-        expect(email_notifier).to have_received(:notify).with(
-          to: address,
-          message: alert.title
+        expect(Facebook::Messenger::Bot).to have_received(:deliver).with(
+          {
+            recipient: { id: address },
+            message: { text: alert.title },
+            message_type: Facebook::Messenger::Bot::MessagingType::UPDATE
+          },
+          access_token: facebook_access_token
         )
       end
     end
 
     context 'when the recpient channel is WhatsApp' do
       let(:channel) { 'whatsapp' }
-      let(:email_notifier) { instance_double(Notifiers::WhatsApp, notify: true) }
+      let(:whats_api) { instance_double(Whats::Api, send_message: true) }
 
       before do
-        allow(Notifiers::WhatsApp).to receive(:new).and_return(email_notifier)
+        allow(Whats::Api).to receive(:new).and_return(whats_api)
 
         notify
       end
 
-      it 'notifies the recipient of the alert' do
-        expect(email_notifier).to have_received(:notify).with(
-          to: address,
-          message: alert.title
-        )
+      it 'notifies the receipient of the alert' do
+        expect(whats_api).to have_received(:send_message).with(address, alert.title)
       end
     end
 
     context 'when the recpient channel is Slack' do
       let(:channel) { 'slack' }
-      let(:email_notifier) { instance_double(Notifiers::Slack, notify: true) }
+      let(:slack_notifier) { instance_double(Slack::Notifier, ping: true) }
 
       before do
-        allow(Notifiers::Slack).to receive(:new).and_return(email_notifier)
+        allow(Slack::Notifier).to receive(:new).and_return(slack_notifier)
 
         notify
       end
 
-      it 'notifies the recipient of the alert' do
-        expect(email_notifier).to have_received(:notify).with(
-          to: address,
-          message: alert.title
-        )
+      it 'instantiates a slack notifier with the correct attributes' do
+        expect(Slack::Notifier).to have_received(:new).with(address, channel: "#weather-alerts", username: "was-bot")
+      end
+
+      it 'notifies the receipient of the alert' do
+        expect(slack_notifier).to have_received(:ping).with(alert.title)
       end
     end
   end
