@@ -3,6 +3,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '2.5.1'
 
+gem 'aws-sdk-sqs'
 gem 'bootsnap', '>= 1.1.0', require: false
 gem 'facebook-messenger'
 gem 'pg', '>= 0.18', '< 2.0'
@@ -11,6 +12,7 @@ gem 'rails', '~> 5.2.2'
 gem 'rest-client'
 gem 'sass-rails', '~> 5.0'
 gem 'sidekiq'
+gem 'sidekiq-scheduler'
 gem 'simple-rss'
 gem "slack-notifier"
 gem 'turbolinks', '~> 5'

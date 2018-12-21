@@ -1,4 +1,6 @@
 class ImportAlertsFromSourceJob < ApplicationJob
+  queue_as :default
+
   def perform(source)
     response = RestClient.get(source.address)
     feed = SimpleRSS.parse(response.body)

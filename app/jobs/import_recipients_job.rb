@@ -1,6 +1,8 @@
 require 'csv'
 
 class ImportRecipientsJob < ApplicationJob
+  queue_as :default
+
   def perform(import)
     return unless import.import_type.casecmp('recipients').zero?
     return unless import.file.content_type.casecmp('text/csv').zero?
