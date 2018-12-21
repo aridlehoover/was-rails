@@ -49,6 +49,6 @@ In order to notify as many people as possible,
 I want to...
 
 * Import a CSV file containing Recipient data ✅
-* Import Recipient data from a queue
+* Import Recipient data from a queue ✅
 * Import a Recipient's Twitter followers accounts
 * Import a Recipient's Facebook Messenger contacts
