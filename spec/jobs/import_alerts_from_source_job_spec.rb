@@ -54,6 +54,29 @@ describe ImportAlertsFromSourceJob do
       end
     end
 
+    context 'when the channel is the PTWC - Pacific Ocean Bulletins RSS feed' do
+      let(:channel) { 'PTWC - Pacific Ocean Bulletins RSS feed' }
+      let(:feed_item) do
+        instance_double(
+          'feed_item',
+          guid: 'uuid',
+          title: 'título',
+          description: "TSUNAMI!\n  * LOCATION       SOUTHERN ALASKA\n",
+          pubDate: 'publicación'
+        )
+      end
+
+      it 'creates an alert from each fetched item' do
+        expect(Alert).to have_received(:create).with(
+          uuid: 'uuid',
+          title: 'título',
+          location: 'SOUTHERN ALASKA',
+          message: "TSUNAMI!\n  * LOCATION       SOUTHERN ALASKA\n",
+          publish_at: 'publicación'
+        )
+      end
+    end
+
     context 'when the channel is the USGS Earthquakes ATOM feed' do
       let(:channel) { 'USGS Earthquakes ATOM feed' }
       let(:feed_item) do

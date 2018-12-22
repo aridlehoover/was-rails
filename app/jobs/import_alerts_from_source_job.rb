@@ -18,6 +18,16 @@ class ImportAlertsFromSourceJob < ApplicationJob
           expires_at: item.cap_expires
         )
       end
+    when 'PTWC - Pacific Ocean Bulletins RSS feed'
+      feed.items.each do |item|
+        Alert.create(
+          uuid: item.guid,
+          title: item.title,
+          location: item.description.match(/LOCATION\s+(.*)\n/)[1],
+          message: item.description,
+          publish_at: item.pubDate
+        )
+      end
     when 'USGS Earthquakes ATOM feed'
       feed.items.each do |item|
         Alert.create(

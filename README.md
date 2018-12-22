@@ -27,9 +27,9 @@ I want to...
 
 * Import Alerts from the NWS Warnings ATOM feed ✅
 * Import Alerts from the USGS Earthquakes ATOM feed ✅
-* Import Alerts from the NOAA Tsunami RSS feed ⭐️
+* Import Alerts from the PTWC - Pacific Ocean Bulletins RSS feed ✅
 * Import Alerts from telemetry off a weather monitoring device via a queue ✅
-* Import Alerts from a Twitter feed ⭐️
+* Import Alerts from a Twitter feed
 
 As an administrator,
 In order to reach people where they are paying attention,
