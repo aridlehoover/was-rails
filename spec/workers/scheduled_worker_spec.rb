@@ -8,8 +8,7 @@ describe ScheduledWorker do
 
     let(:input_queue_name) { 'input_queue_name' }
     let(:environment) { 'environment' }
-    let(:sqs_connection) { instance_double(SQS::Connection, receive_message: messages) }
-    let(:messages) { [message] }
+    let(:sqs_connection) { instance_double(SQS::Connection, receive_message: message) }
     let(:message) { instance_double(Aws::SQS::Types::Message, body: body) }
     let(:body) { { type: 'create_alert' }.to_json }
 

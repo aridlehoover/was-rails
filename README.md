@@ -50,5 +50,6 @@ I want to...
 
 * Import a CSV file containing Recipient data ✅
 * Import Recipient data from a queue ✅
+* Unsubscribe Recipient via a queue ✅
 * Import a Recipient's Twitter followers accounts
 * Import a Recipient's Facebook Messenger contacts

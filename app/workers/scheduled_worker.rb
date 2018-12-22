@@ -2,11 +2,15 @@ class ScheduledWorker
   include Sidekiq::Worker
 
   def perform
+    return if message.blank?
+
     case message_type
     when 'create_alert'
       CreateAlertJob.perform_later(message_body)
     when 'create_recipient'
       CreateRecipientJob.perform_later(message_body)
+    when 'unsubscribe_recipient'
+      UnsubscribeRecipientJob.perform_later(message_body)
     end
   end
 
@@ -21,10 +25,10 @@ class ScheduledWorker
   end
 
   def message
-    @message ||= connection.receive_message.first
+    @message ||= connection.receive_message
   end
 
   def connection
-    SQS::Connection.new(environment: Rails.env, queue_name: ENV['INPUT_QUEUE_NAME'])
+    @connection ||= SQS::Connection.new(environment: Rails.env, queue_name: ENV['INPUT_QUEUE_NAME'])
   end
 end
