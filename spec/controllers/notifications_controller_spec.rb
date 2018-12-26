@@ -6,11 +6,11 @@ describe NotificationsController, type: :controller do
   let(:notification_type) { 'notification_type' }
   let(:valid_session) { {} }
 
-  describe "POST #create" do
+  describe 'POST #create' do
     subject(:create) { post :create, params: { notification: valid_attributes }, session: valid_session }
 
-    context "with valid params" do
-      context "when the nofitication type is an alert" do
+    context 'with valid params' do
+      context 'when the notification type is an alert' do
         let(:notification_type) { 'alert' }
         let(:alert) { instance_double(Alert, present?: true) }
 
@@ -21,12 +21,12 @@ describe NotificationsController, type: :controller do
           create
         end
 
-        it "notifies all recipients of the alert" do
+        it 'notifies all recipients of the alert' do
           expect(NotifyAllRecipientsJob).to have_received(:perform_later).with(alert)
         end
       end
 
-      context "when the nofitication type is an recipient" do
+      context 'when the notification type is a recipient' do
         let(:notification_type) { 'recipient' }
         let(:recipient) { instance_double(Recipient, present?: true) }
 
@@ -37,7 +37,7 @@ describe NotificationsController, type: :controller do
           create
         end
 
-        it "notifies recipient of the latest published alert" do
+        it 'notifies recipient of the latest published alert' do
           expect(NotifyRecipientOfLastPublishedAlertJob).to have_received(:perform_later).with(recipient)
         end
       end
