@@ -2,6 +2,12 @@
 
 <h1>Alerts</h1>
 
+<%= link_to 'New Alert', new_alert_path %>
+|
+<%= link_to 'Home', '/' %>
+
+<br><br>
+
 <table>
   <thead>
     <tr class="table-row">
@@ -31,6 +37,10 @@
     <% end %>
   </tbody>
 </table>
+
+<br>
+
+<%= paginate @alerts %>
 
 <br>
 

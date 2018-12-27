@@ -2,7 +2,7 @@ class SourcesController < ApplicationController
   before_action :set_source, only: [:show, :edit, :update, :destroy]
 
   def index
-    @sources = Source.all
+    @sources = Source.page(params[:page])
   end
 
   def show

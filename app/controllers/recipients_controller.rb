@@ -2,7 +2,7 @@ class RecipientsController < ApplicationController
   before_action :set_recipient, only: [:show, :edit, :update, :destroy]
 
   def index
-    @recipients = Recipient.all
+    @recipients = Recipient.page(params[:page])
   end
 
   def show

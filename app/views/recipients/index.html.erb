@@ -2,6 +2,12 @@
 
 <h1>Recipients</h1>
 
+<%= link_to 'New Recipient', new_recipient_path %>
+|
+<%= link_to 'Home', '/' %>
+
+<br><br>
+
 <table>
   <thead>
     <tr class="table-row">
@@ -23,6 +29,10 @@
     <% end %>
   </tbody>
 </table>
+
+<br>
+
+<%= paginate @recipients %>
 
 <br>
 

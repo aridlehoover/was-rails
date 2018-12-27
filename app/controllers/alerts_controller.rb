@@ -2,7 +2,7 @@ class AlertsController < ApplicationController
   before_action :set_alert, only: [:show, :edit, :update, :destroy]
 
   def index
-    @alerts = Alert.all
+    @alerts = Alert.order(id: :desc).page(params[:page])
   end
 
   def show

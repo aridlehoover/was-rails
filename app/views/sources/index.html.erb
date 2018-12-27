@@ -2,6 +2,12 @@
 
 <h1>Sources</h1>
 
+<%= link_to 'New Source', new_source_path %>
+|
+<%= link_to 'Home', '/' %>
+
+<br><br>
+
 <table>
   <thead>
     <tr class="table-row">
@@ -22,6 +28,10 @@
     <% end %>
   </tbody>
 </table>
+
+<br>
+
+<%= paginate @sources %>
 
 <br>
 
