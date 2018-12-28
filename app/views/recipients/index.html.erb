@@ -11,6 +11,7 @@
 <table>
   <thead>
     <tr class="table-row">
+      <th>Id</th>
       <th>Channel</th>
       <th>Address</th>
       <th colspan="4"></th>
@@ -19,6 +20,7 @@
   <tbody>
     <% @recipients.each do |recipient| %>
       <tr>
+        <th><%= source.id %></th>
         <td class="textarea"><%= recipient.channel %></td>
         <td class="textarea"><%= recipient.address %></td>
         <td><%= link_to 'Show', recipient %></td>

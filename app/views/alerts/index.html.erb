@@ -11,6 +11,7 @@
 <table>
   <thead>
     <tr class="table-row">
+      <th>Id</th>
       <th>Title</th>
       <th>Location</th>
       <th>Message</th>
@@ -23,6 +24,7 @@
   <tbody>
     <% @alerts.each do |alert| %>
       <tr>
+        <td><%= alert.id %></td>
         <td class="textarea"><%= alert.title %></td>
         <td class="text"><%= alert.location %></td>
         <td class="textarea"><%= alert.message %></td>
