@@ -94,12 +94,6 @@ describe AlertsController, type: :controller do
         expect { put :update, params: params, session: valid_session }.to change { alert.reload.title }.to(new_title)
       end
 
-      it 'logs success' do
-        put :update, params: params, session: valid_session
-
-        expect(WASLogger).to have_received(:json).with(action: :update_alert, status: :succeeded, params: params)
-      end
-
       it "redirects to the alert" do
         put :update, params: params, session: valid_session
 
@@ -109,12 +103,6 @@ describe AlertsController, type: :controller do
 
     context "with invalid params" do
       let(:params) { { id: alert.to_param, alert: invalid_attributes } }
-
-      it 'logs failure' do
-        put :update, params: params, session: valid_session
-
-        expect(WASLogger).to have_received(:json).with(action: :update_alert, status: :failed, params: params)
-      end
 
       it "returns a success response (i.e. to display the 'edit' template)" do
         put :update, params: params, session: valid_session
@@ -130,12 +118,6 @@ describe AlertsController, type: :controller do
 
     it "destroys the requested alert" do
       expect { delete :destroy, params: params, session: valid_session }.to change(Alert, :count).by(-1)
-    end
-
-    it 'logs success' do
-      delete :destroy, params: params, session: valid_session
-
-      expect(WASLogger).to have_received(:json).with(action: :destroy_alert, status: :succeeded, params: params)
     end
 
     it "redirects to the alerts list" do

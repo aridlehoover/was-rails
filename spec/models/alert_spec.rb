@@ -106,4 +106,49 @@ describe Alert, type: :model do
       end
     end
   end
+
+  describe '.update' do
+    subject(:update) { alert.update(updated_attributes) }
+
+    let!(:alert) { described_class.create(alert_attributes) }
+    let(:updated_attributes) { { title: 'new title' } }
+
+    before do
+      allow(WASLogger).to receive(:json)
+
+      update
+    end
+
+    context 'when the alert is persisted' do
+      it 'logs success' do
+        expect(WASLogger).to have_received(:json).with(action: :update_alert, status: :succeeded, params: updated_attributes)
+      end
+    end
+
+    context 'when the alert is NOT persisted' do
+      let(:updated_attributes) { { title: nil } }
+
+      it 'logs failure' do
+        expect(WASLogger).to have_received(:json).with(action: :update_alert, status: :failed, params: updated_attributes)
+      end
+    end
+  end
+
+  describe '.destroy' do
+    subject(:destroy) { alert.destroy }
+
+    let!(:alert) { described_class.create(alert_attributes) }
+
+    before do
+      allow(WASLogger).to receive(:json)
+
+      destroy
+    end
+
+    context 'when the alert is destroyed' do
+      it 'logs success' do
+        expect(WASLogger).to have_received(:json).with(action: :destroy_alert, status: :succeeded, params: alert.attributes)
+      end
+    end
+  end
 end

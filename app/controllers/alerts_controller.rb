@@ -29,17 +29,14 @@ class AlertsController < ApplicationController
 
   def update
     if @alert.update(alert_params)
-      WASLogger.json(action: :update_alert, status: :succeeded, params: { alert: alert_params.to_h, id: id })
       redirect_to @alert, notice: 'Alert was successfully updated.'
     else
-      WASLogger.json(action: :update_alert, status: :failed, params: { alert: alert_params.to_h, id: id })
       render :edit
     end
   end
 
   def destroy
     @alert.destroy
-    WASLogger.json(action: :destroy_alert, status: :succeeded, params: { id: id })
     redirect_to alerts_url, notice: 'Alert was successfully destroyed.'
   end
 

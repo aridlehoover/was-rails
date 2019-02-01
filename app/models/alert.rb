@@ -12,18 +12,6 @@ class Alert < ApplicationRecord
     NotifyAllRecipientsJob.set(wait_until: publish_at).perform_later(self) unless expired?
   end
 
-  def self.create(attributes)
-    alert = super(attributes)
-
-    if alert.persisted?
-      WASLogger.json(action: :create_alert, status: :succeeded, params: attributes)
-    else
-      WASLogger.json(action: :create_alert, status: :failed, params: attributes)
-    end
-
-    alert
-  end
-
   private
 
   def expired?
