@@ -18,13 +18,11 @@ class AlertsController < ApplicationController
   end
 
   def create
-    @alert = Alert.new(alert_params)
+    @alert = Alert.create(alert_params)
 
-    if @alert.save
-      WASLogger.json(action: :create_alert, status: :succeeded, params: { alert: alert_params.to_h })
+    if @alert.persisted?
       redirect_to @alert, notice: 'Alert was successfully created.'
     else
-      WASLogger.json(action: :create_alert, status: :failed, params: { alert: alert_params.to_h })
       render :new
     end
   end

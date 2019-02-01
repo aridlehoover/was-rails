@@ -38,21 +38,5 @@ describe CreateAlertJob, type: :job do
     it 'creates an alert with the provided alert attributes' do
       expect(Alert).to have_received(:create).with(alert_attributes)
     end
-
-    context 'when the alert record is successfully created' do
-      let(:persisted?) { true }
-
-      it 'logs success' do
-        expect(WASLogger).to have_received(:json).with(action: :create_alert, status: :succeeded, params: alert_attributes)
-      end
-    end
-
-    context 'when the alert record is NOT created' do
-      let(:persisted?) { false }
-
-      it 'logs failure' do
-        expect(WASLogger).to have_received(:json).with(action: :create_alert, status: :failed, params: alert_attributes)
-      end
-    end
   end
 end

@@ -66,12 +66,6 @@ describe AlertsController, type: :controller do
         expect { post :create, params: params, session: valid_session }.to change(Alert, :count).by(1)
       end
 
-      it 'logs success' do
-        post :create, params: params, session: valid_session
-
-        expect(WASLogger).to have_received(:json).with(action: :create_alert, status: :succeeded, params: params)
-      end
-
       it "redirects to the created alert" do
         post :create, params: params, session: valid_session
         expect(response).to redirect_to(Alert.last)
@@ -80,12 +74,6 @@ describe AlertsController, type: :controller do
 
     context "with invalid params" do
       let(:params) { { alert: invalid_attributes } }
-
-      it 'logs failure' do
-        post :create, params: params, session: valid_session
-
-        expect(WASLogger).to have_received(:json).with(action: :create_alert, status: :failed, params: params)
-      end
 
       it "returns a success response (i.e. to display the 'new' template)" do
         post :create, params: params, session: valid_session

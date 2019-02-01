@@ -82,4 +82,28 @@ describe Alert, type: :model do
       end
     end
   end
+
+  describe '.create' do
+    subject(:create) { described_class.create(alert_attributes) }
+
+    before do
+      allow(WASLogger).to receive(:json)
+
+      create
+    end
+
+    context 'when the alert is persisted' do
+      it 'logs success' do
+        expect(WASLogger).to have_received(:json).with(action: :create_alert, status: :succeeded, params: alert_attributes)
+      end
+    end
+
+    context 'when the alert is NOT persisted' do
+      let(:alert_attributes) { {} }
+
+      it 'logs failure' do
+        expect(WASLogger).to have_received(:json).with(action: :create_alert, status: :failed, params: alert_attributes)
+      end
+    end
+  end
 end
