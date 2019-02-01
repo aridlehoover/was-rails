@@ -9,7 +9,18 @@ class Source < ApplicationRecord
   end
 
   def import_alerts
-    parsed_feed_data.items.each { |item| Alert.create(alert_attributes(item)) }
+    alerts = parsed_feed_data.items.map { |item| Alert.create(alert_attributes(item)) }
+    failed_alerts = alerts.reject(&:persisted?)
+
+    if failed_alerts.none?
+      WASLogger.json(action: :import_alerts, status: :succeeded, params: { source: attributes })
+    else
+      WASLogger.json(
+        action: :import_alerts,
+        status: :failed,
+        params: { source: attributes, failed_alerts: failed_alerts.map(&:attributes) }
+      )
+    end
   end
 
   private

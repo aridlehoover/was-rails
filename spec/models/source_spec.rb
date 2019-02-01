@@ -32,11 +32,15 @@ describe Source, type: :model do
     let(:rss_feed) { instance_double('rss_feed', items: rss_feed_items) }
     let(:rss_feed_items) { [feed_item] }
     let(:feed_item) { nil }
+    let(:alert) { instance_double(Alert, persisted?: persisted?, attributes: alert_attributes) }
+    let(:alert_attributes) { {} }
+    let(:persisted?) { true }
 
     before do
       allow(RestClient).to receive(:get).and_return(response)
       allow(SimpleRSS).to receive(:parse).and_return(rss_feed)
-      allow(Alert).to receive(:create)
+      allow(Alert).to receive(:create).and_return(alert)
+      allow(WASLogger).to receive(:json)
 
       import_alerts
     end
@@ -116,6 +120,47 @@ describe Source, type: :model do
           location: 'ubicación',
           message: 'resumen',
           publish_at: 'publicación'
+        )
+      end
+    end
+
+    context 'when there are NO failures importing alerts' do
+      let(:channel) { 'USGS Earthquakes ATOM feed' }
+      let(:feed_item) do
+        instance_double(
+          'feed_item',
+          id: 'uuid',
+          title: 'título - ubicación',
+          summary: 'resumen',
+          updated: 'publicación'
+        )
+      end
+      let(:persisted?) { true }
+
+      it 'logs success' do
+        expect(WASLogger).to have_received(:json).with(action: :import_alerts, status: :succeeded, params: { source: source.attributes })
+      end
+    end
+
+    context 'when there are SOME failures importing alerts' do
+      let(:channel) { 'USGS Earthquakes ATOM feed' }
+      let(:feed_item) do
+        instance_double(
+          'feed_item',
+          id: nil,
+          title: 'título - ubicación',
+          summary: 'resumen',
+          updated: 'publicación'
+        )
+      end
+      let(:persisted?) { false }
+      let(:alert_attributes) { { uuid: nil } }
+
+      it 'logs failure' do
+        expect(WASLogger).to have_received(:json).with(
+          action: :import_alerts,
+          status: :failed,
+          params: { source: source.attributes, failed_alerts: [alert_attributes] }
         )
       end
     end
