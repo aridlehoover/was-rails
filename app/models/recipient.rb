@@ -28,6 +28,8 @@ class Recipient < ApplicationRecord
     when :slack
       send_via_slack(address, alert.title)
     end
+
+    WASLogger.json(action: :recipient_notified, status: :succeeded, params: { channel: channel, address: address, alert: alert.attributes })
   end
 
   private

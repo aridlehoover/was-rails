@@ -31,7 +31,21 @@ describe Recipient, type: :model do
   describe '#notify' do
     subject(:notify) { recipient.notify(alert) }
 
-    let(:alert) { instance_double(Alert, title: 'Title') }
+    let(:alert) { Alert.new(title: 'Title') }
+
+    before do
+      allow(WASLogger).to receive(:json)
+    end
+
+    it 'logs success' do
+      notify
+
+      expect(WASLogger).to have_received(:json).with(
+        action: :recipient_notified,
+        status: :succeeded,
+        params: { channel: channel, address: address, alert: alert.attributes }
+      )
+    end
 
     context 'when the recpient channel is sms' do
       let(:channel) { 'sms' }
