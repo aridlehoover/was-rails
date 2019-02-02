@@ -1,8 +1,9 @@
 require 'rails_helper'
 
 describe Source, type: :model do
-  subject(:source) { described_class.new(channel: channel, address: address) }
+  subject(:source) { described_class.new(source_attributes) }
 
+  let(:source_attributes) { { channel: channel, address: address } }
   let(:channel) { 'channel' }
   let(:address) { 'address' }
 
@@ -164,5 +165,12 @@ describe Source, type: :model do
         )
       end
     end
+  end
+
+  describe 'logging' do
+    let(:attributes) { source_attributes }
+    let(:invalid_attributes) { { channel: nil } }
+
+    it_behaves_like 'a model with logging'
   end
 end

@@ -6,9 +6,9 @@ class Alert < ApplicationRecord
 
   scope :published, -> { where('publish_at < :now AND expires_at > :now', now: Time.current) }
 
-  after_create :notify_all_recipients
+  after_create :enqueue_notify_all_recipients_job
 
-  def notify_all_recipients
+  def enqueue_notify_all_recipients_job
     NotifyAllRecipientsJob.set(wait_until: publish_at).perform_later(self) unless expired?
   end
 

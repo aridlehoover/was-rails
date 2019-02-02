@@ -1,8 +1,9 @@
 require 'rails_helper'
 
 describe Recipient, type: :model do
-  subject(:recipient) { described_class.new(channel: channel, address: address) }
+  subject(:recipient) { described_class.new(recipient_attributes) }
 
+  let(:recipient_attributes) { { channel: channel, address: address } }
   let(:channel) { 'channel' }
   let(:address) { 'address' }
 
@@ -168,5 +169,12 @@ describe Recipient, type: :model do
         expect(slack_notifier).to have_received(:ping).with(alert.title)
       end
     end
+  end
+
+  describe 'logging' do
+    let(:attributes) { recipient_attributes }
+    let(:invalid_attributes) { { channel: nil } }
+
+    it_behaves_like 'a model with logging'
   end
 end

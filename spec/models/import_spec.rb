@@ -1,8 +1,9 @@
 require 'rails_helper'
 
 describe Import, type: :model do
-  subject(:import) { described_class.new(import_type: import_type) }
+  subject(:import) { described_class.new(import_attributes) }
 
+  let(:import_attributes) { { import_type: import_type } }
   let(:import_type) { 'recipients' }
 
   describe 'validations' do
@@ -94,5 +95,12 @@ describe Import, type: :model do
         end
       end
     end
+  end
+
+  describe 'logging' do
+    let(:attributes) { import_attributes }
+    let(:invalid_attributes) { { import_type: nil } }
+
+    it_behaves_like 'a model with logging'
   end
 end
