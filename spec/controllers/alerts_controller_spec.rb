@@ -17,10 +17,6 @@ describe AlertsController, type: :controller do
       get :index, params: params, session: valid_session
     end
 
-    it 'logs success' do
-      expect(WASLogger).to have_received(:json).with(action: :find_alerts, status: :succeeded, params: params)
-    end
-
     it "returns a success response" do
       expect(response).to be_successful
     end
@@ -32,10 +28,6 @@ describe AlertsController, type: :controller do
 
     before do
       get :show, params: params, session: valid_session
-    end
-
-    it 'logs success' do
-      expect(WASLogger).to have_received(:json).with(action: :find_alert, status: :succeeded, params: params)
     end
 
     it "returns a success response" do

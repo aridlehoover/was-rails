@@ -3,11 +3,9 @@ class AlertsController < ApplicationController
 
   def index
     @alerts = Alert.order(id: :desc).page(params[:page])
-    WASLogger.json(action: :find_alerts, status: :succeeded, params: { page: params[:page] })
   end
 
   def show
-    WASLogger.json(action: :find_alert, status: :succeeded, params: { id: id })
   end
 
   def new
