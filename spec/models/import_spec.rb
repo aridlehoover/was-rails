@@ -20,4 +20,79 @@ describe Import, type: :model do
       expect(ImportRecipientsJob).to have_received(:perform_later).with(import)
     end
   end
+
+  describe '#import_recipients' do
+    subject(:import_recipients) { import.import_recipients }
+
+    let(:file) { instance_double('file', content_type: content_type, download: content) }
+    let(:content_type) { 'text/csv' }
+    let(:content) { instance_double('file_contents') }
+    let(:csv_rows) do
+      [
+        ['channel', 'address'],
+        ['SMS', '123-456-7890'],
+        ['Email', 'test@example.com']
+      ]
+    end
+    let(:recipient) { instance_double(Recipient, persisted?: persisted?) }
+    let(:persisted?) { true }
+
+    before do
+      allow(import).to receive(:file).and_return(file)
+      allow(CSV).to receive(:parse).and_return(csv_rows)
+      allow(Recipient).to receive(:create).and_return(recipient)
+      allow(WASLogger).to receive(:json)
+
+      import_recipients
+    end
+
+    context 'when ALL recipients are successfully created' do
+      let(:persisted?) { true }
+
+      it 'logs success' do
+        expect(WASLogger).to have_received(:json).with(action: :import_recipients, status: :succeeded, params: import.attributes)
+      end
+    end
+
+    context 'when SOME recipients are NOT created' do
+      let(:persisted?) { false }
+
+      it 'logs failure' do
+        expect(WASLogger).to have_received(:json).with(action: :import_recipients, status: :failed, params: import.attributes)
+      end
+    end
+
+    context 'when import type is NOT receipient' do
+      let(:import_type) { 'not recipient' }
+
+      it 'does NOT process create recpients' do
+        expect(Recipient).not_to have_received(:create)
+      end
+    end
+
+    context 'when import type is recipients' do
+      let(:import_type) { 'recipients' }
+
+      context 'and the file type is NOT CSV' do
+        let(:content_type) { 'image/png' }
+
+        it 'does NOT process create recpients' do
+          expect(Recipient).not_to have_received(:create)
+        end
+      end
+
+      context 'and the file type is CSV' do
+        let(:content_type) { 'text/csv' }
+
+        it 'assumes the first row contains headers' do
+          expect(Recipient).not_to have_received(:create).with(channel: 'channel', address: 'address')
+        end
+
+        it 'creates a recipient record for each row in the file' do
+          expect(Recipient).to have_received(:create).with(channel: 'sms', address: '123-456-7890')
+          expect(Recipient).to have_received(:create).with(channel: 'email', address: 'test@example.com')
+        end
+      end
+    end
+  end
 end

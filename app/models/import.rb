@@ -5,9 +5,25 @@ class Import < ApplicationRecord
 
   has_one_attached :file
 
-  after_create :import_recipients
+  after_create :enqueue_import_recipients_job
+
+  def enqueue_import_recipients_job
+    ImportRecipientsJob.perform_later(self)
+  end
 
   def import_recipients
-    ImportRecipientsJob.perform_later(self)
+    return unless import_type.casecmp('recipients').zero?
+    return unless file.content_type.casecmp('text/csv').zero?
+
+    rows = CSV.parse(file.download)
+    recipients = rows.map.with_index do |(channel, address), i|
+      Recipient.create(channel: channel.downcase, address: address) unless i.zero?
+    end
+
+    if recipients.compact.reject(&:persisted?).none?
+      WASLogger.json(action: :import_recipients, status: :succeeded, params: attributes)
+    else
+      WASLogger.json(action: :import_recipients, status: :failed, params: attributes)
+    end
   end
 end
