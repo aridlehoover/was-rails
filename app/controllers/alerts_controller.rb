@@ -16,9 +16,9 @@ class AlertsController < ApplicationController
   end
 
   def create
-    @alert = Alert.create(alert_params)
+    @alert = Alert.new(alert_params)
 
-    if @alert.persisted?
+    if @alert.save
       redirect_to @alert, notice: 'Alert was successfully created.'
     else
       render :new
