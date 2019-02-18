@@ -20,7 +20,7 @@
   <tbody>
     <% @recipients.each do |recipient| %>
       <tr>
-        <th><%= source.id %></th>
+        <th><%= recipient.id %></th>
         <td class="textarea"><%= recipient.channel %></td>
         <td class="textarea"><%= recipient.address %></td>
         <td><%= link_to 'Show', recipient %></td>
