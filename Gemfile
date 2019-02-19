@@ -26,6 +26,7 @@ gem "whatsapp"
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'dotenv-rails'
+  gem 'guard-rspec', require: false
   gem 'rspec-rails'
 end
 
