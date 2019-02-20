@@ -4,8 +4,10 @@ class ImportsController < ApplicationController
     @import.file.attach(params[:import][:file])
 
     if @import.save
+      WASLogger.json(action: :create_import, actor: :administrator, status: :succeeded, params: import_params.to_h)
       redirect_to '/', notice: 'Import saved!'
     else
+      WASLogger.json(action: :create_import, actor: :administrator, status: :failed, params: import_params.to_h)
       render :new
     end
   end

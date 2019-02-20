@@ -119,11 +119,4 @@ describe Import, type: :model do
       end
     end
   end
-
-  describe 'logging' do
-    let(:attributes) { import_attributes }
-    let(:invalid_attributes) { { import_type: nil } }
-
-    it_behaves_like 'a model with logging'
-  end
 end
