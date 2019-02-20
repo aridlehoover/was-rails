@@ -6,7 +6,7 @@ class SQSWorker
   def perform(sqs_message, body)
     case body['type']
     when 'create_alert'
-      CreateAlertJob.perform_later(body)
+      Alert.create(body.slice(*Alert::ALLOWED_ATTRIBUTES))
     when 'create_recipient'
       CreateRecipientJob.perform_later(body)
     when 'unsubscribe_recipient'

@@ -1,4 +1,6 @@
 class Alert < ApplicationRecord
+  ALLOWED_ATTRIBUTES = ['uuid', 'title', 'location', 'message', 'publish_at', 'effective_at', 'expires_at'].freeze
+
   validates :uuid, presence: true
   validates :title, presence: true
   validates :location, presence: true

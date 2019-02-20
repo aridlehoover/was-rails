@@ -7,8 +7,9 @@ describe SQSWorker do
     subject(:perform) { worker.perform(sqs_message, body) }
 
     let(:sqs_message) { instance_double('sqs_message', delete: true) }
-    let(:body) { { 'type' => type } }
+    let(:body) { { 'type' => type }.merge(attributes) }
     let(:type) { 'type' }
+    let(:attributes) { {} }
 
     it 'deletes the sqs_message' do
       perform
@@ -18,15 +19,23 @@ describe SQSWorker do
 
     context 'when the type is create_alert' do
       let(:type) { 'create_alert' }
+      let(:attributes) do
+        {
+          'uuid' => 'uuid',
+          'title' => 'title',
+          'location' => 'location',
+          'publish_at' => '2019-01-01 00:00:00'
+        }
+      end
 
       before do
-        allow(CreateAlertJob).to receive(:perform_later)
+        allow(Alert).to receive(:create)
 
         perform
       end
 
       it 'enqueues a create alert job' do
-        expect(CreateAlertJob).to have_received(:perform_later).with(body)
+        expect(Alert).to have_received(:create).with(attributes)
       end
     end
 
