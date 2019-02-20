@@ -51,13 +51,18 @@ class RecipientsController < ApplicationController
 
   def destroy
     @recipient.destroy
+    WASLogger.json(action: :destroy_recipient, actor: :administrator, status: :succeeded, params: { id: id })
     redirect_to recipients_url, notice: 'Recipient was successfully destroyed.'
   end
 
   private
 
   def set_recipient
-    @recipient = Recipient.find(params[:id])
+    @recipient = Recipient.find(id)
+  end
+
+  def id
+    params[:id]
   end
 
   def recipient_params

@@ -1,6 +1,4 @@
 class Source < ApplicationRecord
-  include Loggable
-
   validates :channel, presence: true
   validates :address, presence: true
 

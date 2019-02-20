@@ -170,11 +170,4 @@ describe Source, type: :model do
       end
     end
   end
-
-  describe 'logging' do
-    let(:attributes) { source_attributes }
-    let(:invalid_attributes) { { channel: nil } }
-
-    it_behaves_like 'a model with logging'
-  end
 end
