@@ -41,15 +41,16 @@ describe SQSWorker do
 
     context 'when the type is create_recipient' do
       let(:type) { 'create_recipient' }
+      let(:attributes) { { 'channel' => 'channel', 'address' => 'address' } }
 
       before do
-        allow(CreateRecipientJob).to receive(:perform_later)
+        allow(Recipient).to receive(:create)
 
         perform
       end
 
       it 'enqueues a create recipient job' do
-        expect(CreateRecipientJob).to have_received(:perform_later).with(body)
+        expect(Recipient).to have_received(:create).with(attributes)
       end
     end
 

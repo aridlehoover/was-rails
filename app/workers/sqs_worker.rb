@@ -8,7 +8,7 @@ class SQSWorker
     when 'create_alert'
       Alert.create(body.slice(*Alert::ALLOWED_ATTRIBUTES))
     when 'create_recipient'
-      CreateRecipientJob.perform_later(body)
+      Recipient.create(body.slice(*Recipient::ALLOWED_ATTRIBUTES))
     when 'unsubscribe_recipient'
       UnsubscribeRecipientJob.perform_later(body)
     end
