@@ -1,4 +1,6 @@
 class Import < ApplicationRecord
+  include Loggable
+
   VALID_IMPORT_TYPES = ['recipients'].freeze
 
   validates :import_type, inclusion: { in: VALID_IMPORT_TYPES }

@@ -6,7 +6,12 @@ class SQSWorker
   def perform(sqs_message, body)
     case body['type']
     when 'create_alert'
-      Alert.create(body.slice(*Alert::ALLOWED_ATTRIBUTES))
+      alert = Alert.create(body.slice(*Alert::ALLOWED_ATTRIBUTES))
+      if alert.persisted?
+        WASLogger.json(action: :create_alert, actor: :telemetry, status: :succeeded, params: body)
+      else
+        WASLogger.json(action: :create_alert, actor: :telemetry, status: :failed, params: body, errors: alert.errors.messages)
+      end
     when 'create_recipient'
       Recipient.create(body.slice(*Recipient::ALLOWED_ATTRIBUTES))
     when 'unsubscribe_recipient'

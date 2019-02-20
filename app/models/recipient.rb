@@ -1,4 +1,6 @@
 class Recipient < ApplicationRecord
+  include Loggable
+
   ALLOWED_ATTRIBUTES = ['channel', 'address'].freeze
   SENDGRID_ENDPOINT = 'https://api.sendgrid.com/v3/mail/send'.freeze
   SLACK_CHANNEL = '#weather-alerts'.freeze

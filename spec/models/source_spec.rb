@@ -139,7 +139,9 @@ describe Source, type: :model do
       let(:persisted?) { true }
 
       it 'logs success' do
-        expect(WASLogger).to have_received(:json).with(action: :import_alerts, status: :succeeded, params: { source: source.attributes })
+        expect(WASLogger)
+          .to have_received(:json)
+          .with(action: :import_alerts, actor: :administrator, status: :succeeded, params: { source: source.attributes })
       end
     end
 
@@ -160,6 +162,7 @@ describe Source, type: :model do
       it 'logs failure' do
         expect(WASLogger).to have_received(:json).with(
           action: :import_alerts,
+          actor: :administrator,
           status: :failed,
           params: { source: source.attributes, failed_alerts: [alert_attributes] }
         )

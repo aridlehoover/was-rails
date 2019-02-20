@@ -1,4 +1,6 @@
 class Source < ApplicationRecord
+  include Loggable
+
   validates :channel, presence: true
   validates :address, presence: true
 
@@ -13,10 +15,11 @@ class Source < ApplicationRecord
     failed_alerts = alerts.reject(&:persisted?)
 
     if failed_alerts.none?
-      WASLogger.json(action: :import_alerts, status: :succeeded, params: { source: attributes })
+      WASLogger.json(action: :import_alerts, actor: :administrator, status: :succeeded, params: { source: attributes })
     else
       WASLogger.json(
         action: :import_alerts,
+        actor: :administrator,
         status: :failed,
         params: { source: attributes, failed_alerts: failed_alerts.map(&:attributes) }
       )

@@ -27,15 +27,56 @@ describe SQSWorker do
           'publish_at' => '2019-01-01 00:00:00'
         }
       end
+      let(:alert) { instance_double(Alert, persisted?: persisted?) }
+      let(:persisted?) { true }
 
       before do
-        allow(Alert).to receive(:create)
-
-        perform
+        allow(Alert).to receive(:create).and_return(alert)
+        allow(WASLogger).to receive(:json)
       end
 
-      it 'enqueues a create alert job' do
+      it 'creates an alert' do
+        perform
+
         expect(Alert).to have_received(:create).with(attributes)
+      end
+
+      context 'when the alert is NOT persisted' do
+        let(:persisted?) { false }
+        let(:alert_errors) { instance_double('alert_errors') }
+        let(:alert_error_messages) { instance_double('alert_error_messages') }
+
+        before do
+          allow(alert).to receive(:errors).and_return(alert_errors)
+          allow(alert_errors).to receive(:messages).and_return(alert_error_messages)
+
+          perform
+        end
+
+        it 'logs failure' do
+          expect(WASLogger).to have_received(:json).with(
+            action: :create_alert,
+            actor: :telemetry,
+            status: :failed,
+            params: body,
+            errors: alert_error_messages
+          )
+        end
+      end
+
+      context 'when the alert is persisted' do
+        let(:persisted?) { true }
+
+        before { perform }
+
+        it 'logs success' do
+          expect(WASLogger).to have_received(:json).with(
+            action: :create_alert,
+            actor: :telemetry,
+            status: :succeeded,
+            params: body
+          )
+        end
       end
     end
 

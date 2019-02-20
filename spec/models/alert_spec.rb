@@ -82,11 +82,4 @@ describe Alert, type: :model do
       end
     end
   end
-
-  describe 'logging' do
-    let(:attributes) { alert_attributes }
-    let(:invalid_attributes) { { title: nil } }
-
-    it_behaves_like 'a model with logging'
-  end
 end

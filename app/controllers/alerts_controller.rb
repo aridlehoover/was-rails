@@ -16,25 +16,42 @@ class AlertsController < ApplicationController
   end
 
   def create
-    @alert = Alert.new(alert_params)
+    @alert = Alert.create(alert_params)
 
-    if @alert.save
+    if @alert.persisted?
+      WASLogger.json(action: :create_alert, actor: :administrator, status: :succeeded, params: alert_params.to_h)
       redirect_to @alert, notice: 'Alert was successfully created.'
     else
+      WASLogger.json(
+        action: :create_alert,
+        actor: :administrator,
+        status: :failed,
+        params: alert_params.to_h,
+        errors: @alert.errors.messages
+      )
       render :new
     end
   end
 
   def update
     if @alert.update(alert_params)
+      WASLogger.json(action: :update_alert, actor: :administrator, status: :succeeded, params: alert_params.to_h)
       redirect_to @alert, notice: 'Alert was successfully updated.'
     else
+      WASLogger.json(
+        action: :update_alert,
+        actor: :administrator,
+        status: :failed,
+        params: alert_params.to_h,
+        errors: @alert.errors.messages
+      )
       render :edit
     end
   end
 
   def destroy
     @alert.destroy
+    WASLogger.json(action: :destroy_alert, actor: :administrator, status: :succeeded, params: { id: id })
     redirect_to alerts_url, notice: 'Alert was successfully destroyed.'
   end
 
