@@ -15,12 +15,6 @@ describe SQSWorker do
       allow(WASLogger).to receive(:json)
     end
 
-    it 'deletes the sqs_message' do
-      perform
-
-      expect(sqs_message).to have_received(:delete)
-    end
-
     context 'when the type is create_alert' do
       let(:type) { 'create_alert' }
       let(:attributes) do
@@ -71,6 +65,10 @@ describe SQSWorker do
         let(:persisted?) { true }
 
         before { perform }
+
+        it 'deletes the sqs_message' do
+          expect(sqs_message).to have_received(:delete)
+        end
 
         it 'logs success' do
           expect(WASLogger).to have_received(:json).with(
@@ -128,6 +126,10 @@ describe SQSWorker do
 
         before { perform }
 
+        it 'deletes the sqs_message' do
+          expect(sqs_message).to have_received(:delete)
+        end
+
         it 'logs success' do
           expect(WASLogger).to have_received(:json).with(
             action: :create_recipient,
@@ -141,9 +143,16 @@ describe SQSWorker do
 
     context 'when the type is unsubscribe_recipient' do
       let(:type) { 'unsubscribe_recipient' }
+      let(:recipient) { nil }
 
       before do
         allow(Recipient).to receive(:find_by).and_return(recipient)
+      end
+
+      it 'deletes the sqs_message' do
+        perform
+
+        expect(sqs_message).to have_received(:delete)
       end
 
       context 'and the recipient is NOT found' do

@@ -8,6 +8,7 @@ class SQSWorker
     when 'create_alert'
       alert = Alert.create(body.slice(*Alert::ALLOWED_ATTRIBUTES))
       if alert.persisted?
+        sqs_message.delete
         WASLogger.json(action: :create_alert, actor: :telemetry, status: :succeeded, params: body)
       else
         WASLogger.json(action: :create_alert, actor: :telemetry, status: :failed, params: body, errors: alert.errors.messages)
@@ -15,6 +16,7 @@ class SQSWorker
     when 'create_recipient'
       recipient = Recipient.create(body.slice(*Recipient::ALLOWED_ATTRIBUTES))
       if recipient.persisted?
+        sqs_message.delete
         WASLogger.json(action: :create_recipient, actor: :telecom, status: :succeeded, params: body)
       else
         WASLogger.json(action: :create_recipient, actor: :telecom, status: :failed, params: body, errors: recipient.errors.messages)
@@ -28,8 +30,8 @@ class SQSWorker
       else
         WASLogger.json(action: :unsubscribe_recipient, actor: :telecom, status: :failed, params: body)
       end
-    end
 
-    sqs_message.delete
+      sqs_message.delete
+    end
   end
 end
