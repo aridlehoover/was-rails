@@ -19,9 +19,15 @@ class SQSWorker
       else
         WASLogger.json(action: :create_recipient, actor: :telecom, status: :failed, params: body, errors: recipient.errors.messages)
       end
-
     when 'unsubscribe_recipient'
-      Recipient.find_by(body.slice(*Recipient::ALLOWED_ATTRIBUTES))&.destroy
+      recipient = Recipient.find_by(body.slice(*Recipient::ALLOWED_ATTRIBUTES))
+
+      if recipient.present?
+        recipient.destroy
+        WASLogger.json(action: :unsubscribe_recipient, actor: :telecom, status: :succeeded, params: body)
+      else
+        WASLogger.json(action: :unsubscribe_recipient, actor: :telecom, status: :failed, params: body)
+      end
     end
 
     sqs_message.delete

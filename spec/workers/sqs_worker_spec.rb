@@ -11,6 +11,10 @@ describe SQSWorker do
     let(:type) { 'type' }
     let(:attributes) { {} }
 
+    before do
+      allow(WASLogger).to receive(:json)
+    end
+
     it 'deletes the sqs_message' do
       perform
 
@@ -32,7 +36,6 @@ describe SQSWorker do
 
       before do
         allow(Alert).to receive(:create).and_return(alert)
-        allow(WASLogger).to receive(:json)
       end
 
       it 'creates an alert' do
@@ -89,7 +92,6 @@ describe SQSWorker do
 
       before do
         allow(Recipient).to receive(:create).and_return(recipient)
-        allow(WASLogger).to receive(:json)
       end
 
       it 'creates an recipient' do
@@ -147,8 +149,15 @@ describe SQSWorker do
       context 'and the recipient is NOT found' do
         let(:recipient) { nil }
 
-        it 'does not raise an exception' do
-          expect { perform }.not_to raise_error
+        before { perform }
+
+        it 'logs failure' do
+          expect(WASLogger).to have_received(:json).with(
+            action: :unsubscribe_recipient,
+            actor: :telecom,
+            status: :failed,
+            params: body
+          )
         end
       end
 
@@ -163,6 +172,15 @@ describe SQSWorker do
 
         it 'deletes the recipient' do
           expect(recipient).to have_received(:destroy).with(no_args)
+        end
+
+        it 'logs success' do
+          expect(WASLogger).to have_received(:json).with(
+            action: :unsubscribe_recipient,
+            actor: :telecom,
+            status: :succeeded,
+            params: body
+          )
         end
       end
     end
