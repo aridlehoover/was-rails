@@ -13,7 +13,13 @@ class SQSWorker
         WASLogger.json(action: :create_alert, actor: :telemetry, status: :failed, params: body, errors: alert.errors.messages)
       end
     when 'create_recipient'
-      Recipient.create(body.slice(*Recipient::ALLOWED_ATTRIBUTES))
+      recipient = Recipient.create(body.slice(*Recipient::ALLOWED_ATTRIBUTES))
+      if recipient.persisted?
+        WASLogger.json(action: :create_recipient, actor: :telecom, status: :succeeded, params: body)
+      else
+        WASLogger.json(action: :create_recipient, actor: :telecom, status: :failed, params: body, errors: recipient.errors.messages)
+      end
+
     when 'unsubscribe_recipient'
       Recipient.find_by(body.slice(*Recipient::ALLOWED_ATTRIBUTES))&.destroy
     end

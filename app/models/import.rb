@@ -21,11 +21,18 @@ class Import < ApplicationRecord
     recipients = rows.map.with_index do |(channel, address), i|
       Recipient.create(channel: channel.downcase, address: address) unless i.zero?
     end
+    failed_recipients = recipients.compact.reject(&:persisted?)
 
-    if recipients.compact.reject(&:persisted?).none?
-      WASLogger.json(action: :import_recipients, status: :succeeded, params: attributes)
+    if failed_recipients.none?
+      WASLogger.json(action: :import_recipients, actor: :administrator, status: :succeeded, params: attributes)
     else
-      WASLogger.json(action: :import_recipients, status: :failed, params: attributes)
+      WASLogger.json(
+        action: :import_recipients,
+        actor: :administrator,
+        status: :failed,
+        params: attributes,
+        failed_recipients: failed_recipients.map(&:attributes)
+      )
     end
   end
 end

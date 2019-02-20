@@ -84,14 +84,56 @@ describe SQSWorker do
       let(:type) { 'create_recipient' }
       let(:attributes) { { 'channel' => 'channel', 'address' => 'address' } }
 
-      before do
-        allow(Recipient).to receive(:create)
+      let(:recipient) { instance_double(Recipient, persisted?: persisted?) }
+      let(:persisted?) { true }
 
-        perform
+      before do
+        allow(Recipient).to receive(:create).and_return(recipient)
+        allow(WASLogger).to receive(:json)
       end
 
-      it 'enqueues a create recipient job' do
+      it 'creates an recipient' do
+        perform
+
         expect(Recipient).to have_received(:create).with(attributes)
+      end
+
+      context 'when the recipient is NOT persisted' do
+        let(:persisted?) { false }
+        let(:recipient_errors) { instance_double('recipient_errors') }
+        let(:recipient_error_messages) { instance_double('recipient_error_messages') }
+
+        before do
+          allow(recipient).to receive(:errors).and_return(recipient_errors)
+          allow(recipient_errors).to receive(:messages).and_return(recipient_error_messages)
+
+          perform
+        end
+
+        it 'logs failure' do
+          expect(WASLogger).to have_received(:json).with(
+            action: :create_recipient,
+            actor: :telecom,
+            status: :failed,
+            params: body,
+            errors: recipient_error_messages
+          )
+        end
+      end
+
+      context 'when the recipient is persisted' do
+        let(:persisted?) { true }
+
+        before { perform }
+
+        it 'logs success' do
+          expect(WASLogger).to have_received(:json).with(
+            action: :create_recipient,
+            actor: :telecom,
+            status: :succeeded,
+            params: body
+          )
+        end
       end
     end
 

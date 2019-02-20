@@ -170,11 +170,4 @@ describe Recipient, type: :model do
       end
     end
   end
-
-  describe 'logging' do
-    let(:attributes) { recipient_attributes }
-    let(:invalid_attributes) { { channel: nil } }
-
-    it_behaves_like 'a model with logging'
-  end
 end

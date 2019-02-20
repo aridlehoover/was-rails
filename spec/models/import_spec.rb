@@ -35,36 +35,57 @@ describe Import, type: :model do
         ['Email', 'test@example.com']
       ]
     end
-    let(:recipient) { instance_double(Recipient, persisted?: persisted?) }
+    let(:recipient1) { instance_double(Recipient, persisted?: persisted?) }
+    let(:recipient2) { instance_double(Recipient, persisted?: persisted?) }
     let(:persisted?) { true }
 
     before do
       allow(import).to receive(:file).and_return(file)
       allow(CSV).to receive(:parse).and_return(csv_rows)
-      allow(Recipient).to receive(:create).and_return(recipient)
+      allow(Recipient).to receive(:create).and_return(recipient1, recipient2)
       allow(WASLogger).to receive(:json)
-
-      import_recipients
     end
 
     context 'when ALL recipients are successfully created' do
       let(:persisted?) { true }
 
+      before { import_recipients }
+
       it 'logs success' do
-        expect(WASLogger).to have_received(:json).with(action: :import_recipients, status: :succeeded, params: import.attributes)
+        expect(WASLogger)
+          .to have_received(:json)
+          .with(action: :import_recipients, actor: :administrator, status: :succeeded, params: import.attributes)
       end
     end
 
     context 'when SOME recipients are NOT created' do
       let(:persisted?) { false }
+      let(:recipient_attributes) { { channel: nil } }
+
+      before do
+        allow(recipient1).to receive(:attributes).and_return(recipient_attributes)
+        allow(recipient2).to receive(:attributes).and_return(recipient_attributes)
+
+        import_recipients
+      end
 
       it 'logs failure' do
-        expect(WASLogger).to have_received(:json).with(action: :import_recipients, status: :failed, params: import.attributes)
+        expect(WASLogger)
+          .to have_received(:json)
+          .with(
+            action: :import_recipients,
+            actor: :administrator,
+            status: :failed,
+            params: import.attributes,
+            failed_recipients: [recipient1.attributes, recipient2.attributes]
+          )
       end
     end
 
     context 'when import type is NOT receipient' do
       let(:import_type) { 'not recipient' }
+
+      before { import_recipients }
 
       it 'does NOT process create recpients' do
         expect(Recipient).not_to have_received(:create)
@@ -73,6 +94,8 @@ describe Import, type: :model do
 
     context 'when import type is recipients' do
       let(:import_type) { 'recipients' }
+
+      before { import_recipients }
 
       context 'and the file type is NOT CSV' do
         let(:content_type) { 'image/png' }

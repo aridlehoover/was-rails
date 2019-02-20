@@ -141,7 +141,7 @@ describe Source, type: :model do
       it 'logs success' do
         expect(WASLogger)
           .to have_received(:json)
-          .with(action: :import_alerts, actor: :administrator, status: :succeeded, params: { source: source.attributes })
+          .with(action: :import_alerts, actor: :administrator, status: :succeeded, params: source.attributes)
       end
     end
 
@@ -164,7 +164,8 @@ describe Source, type: :model do
           action: :import_alerts,
           actor: :administrator,
           status: :failed,
-          params: { source: source.attributes, failed_alerts: [alert_attributes] }
+          params: source.attributes,
+          failed_alerts: [alert_attributes]
         )
       end
     end
