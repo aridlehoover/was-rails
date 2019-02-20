@@ -10,7 +10,7 @@ class SQSWorker
     when 'create_recipient'
       Recipient.create(body.slice(*Recipient::ALLOWED_ATTRIBUTES))
     when 'unsubscribe_recipient'
-      UnsubscribeRecipientJob.perform_later(body)
+      Recipient.find_by(body.slice(*Recipient::ALLOWED_ATTRIBUTES))&.destroy
     end
 
     sqs_message.delete

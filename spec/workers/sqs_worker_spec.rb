@@ -58,13 +58,29 @@ describe SQSWorker do
       let(:type) { 'unsubscribe_recipient' }
 
       before do
-        allow(UnsubscribeRecipientJob).to receive(:perform_later)
-
-        perform
+        allow(Recipient).to receive(:find_by).and_return(recipient)
       end
 
-      it 'enqueues a unsubscribe recipient job' do
-        expect(UnsubscribeRecipientJob).to have_received(:perform_later).with(body)
+      context 'and the recipient is NOT found' do
+        let(:recipient) { nil }
+
+        it 'does not raise an exception' do
+          expect { perform }.not_to raise_error
+        end
+      end
+
+      context 'and the recipient is found' do
+        let(:recipient) { instance_double(Recipient) }
+
+        before do
+          allow(recipient).to receive(:destroy)
+
+          perform
+        end
+
+        it 'deletes the recipient' do
+          expect(recipient).to have_received(:destroy).with(no_args)
+        end
       end
     end
   end
