@@ -35,9 +35,11 @@ describe Import, type: :model do
         ['Email', 'test@example.com']
       ]
     end
-    let(:recipient1) { instance_double(Recipient, persisted?: persisted?) }
-    let(:recipient2) { instance_double(Recipient, persisted?: persisted?) }
+    let(:recipient1) { instance_double(Recipient, persisted?: persisted?, attributes: recipient1_attributes) }
+    let(:recipient2) { instance_double(Recipient, persisted?: persisted?, attributes: recipient2_attributes) }
     let(:persisted?) { true }
+    let(:recipient1_attributes) { { channel: 'SMS', address: '123-456-7890' } }
+    let(:recipient2_attributes) { { channel: 'Email', address: 'test@example.com' } }
 
     before do
       allow(import).to receive(:file).and_return(file)
@@ -51,25 +53,34 @@ describe Import, type: :model do
 
       before { import_recipients }
 
-      it 'logs success' do
+      it 'logs success for the import' do
         expect(WASLogger)
           .to have_received(:json)
           .with(action: :import_recipients, actor: :administrator, status: :succeeded, params: import.attributes)
       end
+
+      it 'logs success for each recipient' do
+        expect(WASLogger)
+          .to have_received(:json)
+          .with(action: :create_recipient, actor: :administrator, status: :succeeded, params: recipient1_attributes)
+        expect(WASLogger)
+          .to have_received(:json)
+          .with(action: :create_recipient, actor: :administrator, status: :succeeded, params: recipient2_attributes)
+      end
     end
 
     context 'when SOME recipients are NOT created' do
-      let(:persisted?) { false }
-      let(:recipient_attributes) { { channel: nil } }
+      let(:recipient1) { instance_double(Recipient, persisted?: persisted?, attributes: recipient1_attributes, errors: errors) }
+      let(:errors) { instance_double('errors', messages: error_messages) }
+      let(:error_messages) { instance_double('error_messages') }
 
       before do
-        allow(recipient1).to receive(:attributes).and_return(recipient_attributes)
-        allow(recipient2).to receive(:attributes).and_return(recipient_attributes)
+        allow(recipient1).to receive(:persisted?).and_return(false)
 
         import_recipients
       end
 
-      it 'logs failure' do
+      it 'logs failure for the import' do
         expect(WASLogger)
           .to have_received(:json)
           .with(
@@ -77,7 +88,19 @@ describe Import, type: :model do
             actor: :administrator,
             status: :failed,
             params: import.attributes,
-            failed_recipients: [recipient1.attributes, recipient2.attributes]
+            failed_recipients: [recipient1.attributes]
+          )
+      end
+
+      it 'logs failure for each failed recipient' do
+        expect(WASLogger)
+          .to have_received(:json)
+          .with(
+            action: :create_recipient,
+            actor: :administrator,
+            status: :failed,
+            params: recipient1.attributes,
+            errors: error_messages
           )
       end
     end

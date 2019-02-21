@@ -17,7 +17,7 @@ class Import < ApplicationRecord
 
     rows = CSV.parse(file.download)
     recipients = rows.map.with_index do |(channel, address), i|
-      Recipient.create(channel: channel.downcase, address: address) unless i.zero?
+      create_recipient(channel, address) unless i.zero?
     end
     failed_recipients = recipients.compact.reject(&:persisted?)
 
@@ -32,5 +32,25 @@ class Import < ApplicationRecord
         failed_recipients: failed_recipients.map(&:attributes)
       )
     end
+  end
+
+  private
+
+  def create_recipient(channel, address)
+    recipient = Recipient.create(channel: channel.downcase, address: address)
+
+    if recipient.persisted?
+      WASLogger.json(action: :create_recipient, actor: :administrator, status: :succeeded, params: recipient.attributes)
+    else
+      WASLogger.json(
+        action: :create_recipient,
+        actor: :administrator,
+        status: :failed,
+        params: recipient.attributes,
+        errors: recipient.errors.messages
+      )
+    end
+
+    recipient
   end
 end
