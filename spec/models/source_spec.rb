@@ -33,7 +33,9 @@ describe Source, type: :model do
     let(:rss_feed) { instance_double('rss_feed', items: rss_feed_items) }
     let(:rss_feed_items) { [feed_item] }
     let(:feed_item) { nil }
-    let(:alert) { instance_double(Alert, persisted?: persisted?, attributes: alert_attributes) }
+    let(:alert) { instance_double(Alert, persisted?: persisted?, attributes: alert_attributes, errors: errors) }
+    let(:errors) { instance_double('errors', messages: error_messages) }
+    let(:error_messages) { instance_double('error_messages') }
     let(:alert_attributes) { {} }
     let(:persisted?) { true }
 
@@ -138,10 +140,16 @@ describe Source, type: :model do
       end
       let(:persisted?) { true }
 
-      it 'logs success' do
+      it 'logs success for the import' do
         expect(WASLogger)
           .to have_received(:json)
           .with(action: :import_alerts, actor: :administrator, status: :succeeded, params: source.attributes)
+      end
+
+      it 'logs success for each created alert' do
+        expect(WASLogger)
+          .to have_received(:json)
+          .with(action: :create_alert, actor: :administrator, status: :succeeded, params: alert.attributes)
       end
     end
 
@@ -159,7 +167,7 @@ describe Source, type: :model do
       let(:persisted?) { false }
       let(:alert_attributes) { { uuid: nil } }
 
-      it 'logs failure' do
+      it 'logs failure for the import' do
         expect(WASLogger).to have_received(:json).with(
           action: :import_alerts,
           actor: :administrator,
@@ -167,6 +175,18 @@ describe Source, type: :model do
           params: source.attributes,
           failed_alerts: [alert_attributes]
         )
+      end
+
+      it 'logs failure for each failed alert' do
+        expect(WASLogger)
+          .to have_received(:json)
+          .with(
+            action: :create_alert,
+            actor: :administrator,
+            status: :failed,
+            params: alert.attributes,
+            errors: error_messages
+          )
       end
     end
   end

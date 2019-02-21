@@ -9,7 +9,7 @@ class Source < ApplicationRecord
   end
 
   def import_alerts
-    alerts = parsed_feed_data.items.map { |item| Alert.create(alert_attributes(item)) }
+    alerts = parsed_feed_data.items.map { |item| create_alert(item) }
     failed_alerts = alerts.reject(&:persisted?)
 
     if failed_alerts.none?
@@ -26,6 +26,24 @@ class Source < ApplicationRecord
   end
 
   private
+
+  def create_alert(item)
+    alert = Alert.create(alert_attributes(item))
+
+    if alert.persisted?
+      WASLogger.json(action: :create_alert, actor: :administrator, status: :succeeded, params: alert.attributes)
+    else
+      WASLogger.json(
+        action: :create_alert,
+        actor: :administrator,
+        status: :failed,
+        params: alert.attributes,
+        errors: alert.errors.messages
+      )
+    end
+
+    alert
+  end
 
   def raw_feed_data
     RestClient.get(address)
