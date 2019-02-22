@@ -43,7 +43,7 @@ describe Source, type: :model do
       allow(RestClient).to receive(:get).and_return(response)
       allow(SimpleRSS).to receive(:parse).and_return(rss_feed)
       allow(Alert).to receive(:create).and_return(alert)
-      allow(WASLogger).to receive(:json)
+      allow(ExternalLogger).to receive(:json)
 
       import_alerts
     end
@@ -150,13 +150,13 @@ describe Source, type: :model do
       end
 
       it 'logs success for the import' do
-        expect(WASLogger)
+        expect(ExternalLogger)
           .to have_received(:json)
           .with(action: :import_alerts, actor: :administrator, status: :succeeded, params: source.attributes)
       end
 
       it 'logs success for each created alert' do
-        expect(WASLogger)
+        expect(ExternalLogger)
           .to have_received(:json)
           .with(action: :create_alert, actor: :administrator, status: :succeeded, params: alert_attributes)
       end
@@ -185,7 +185,7 @@ describe Source, type: :model do
       let(:persisted?) { false }
 
       it 'logs failure for the import' do
-        expect(WASLogger).to have_received(:json).with(
+        expect(ExternalLogger).to have_received(:json).with(
           action: :import_alerts,
           actor: :administrator,
           status: :failed,
@@ -194,7 +194,7 @@ describe Source, type: :model do
       end
 
       it 'logs failure for each failed alert' do
-        expect(WASLogger)
+        expect(ExternalLogger)
           .to have_received(:json)
           .with(
             action: :create_alert,

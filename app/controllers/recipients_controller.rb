@@ -19,10 +19,10 @@ class RecipientsController < ApplicationController
     @recipient = Recipient.create(recipient_params)
 
     if @recipient.persisted?
-      WASLogger.json(action: :create_recipient, actor: :administrator, status: :succeeded, params: recipient_params.to_h)
+      ExternalLogger.json(action: :create_recipient, actor: :administrator, status: :succeeded, params: recipient_params.to_h)
       redirect_to @recipient, notice: 'Recipient was successfully created.'
     else
-      WASLogger.json(
+      ExternalLogger.json(
         action: :create_recipient,
         actor: :administrator,
         status: :failed,
@@ -35,10 +35,10 @@ class RecipientsController < ApplicationController
 
   def update
     if @recipient.update(recipient_params)
-      WASLogger.json(action: :update_recipient, actor: :administrator, status: :succeeded, params: recipient_params.to_h)
+      ExternalLogger.json(action: :update_recipient, actor: :administrator, status: :succeeded, params: recipient_params.to_h)
       redirect_to @recipient, notice: 'Recipient was successfully updated.'
     else
-      WASLogger.json(
+      ExternalLogger.json(
         action: :update_recipient,
         actor: :administrator,
         status: :failed,
@@ -51,7 +51,7 @@ class RecipientsController < ApplicationController
 
   def destroy
     @recipient.destroy
-    WASLogger.json(action: :destroy_recipient, actor: :administrator, status: :succeeded, params: { id: id })
+    ExternalLogger.json(action: :destroy_recipient, actor: :administrator, status: :succeeded, params: { id: id })
     redirect_to recipients_url, notice: 'Recipient was successfully destroyed.'
   end
 

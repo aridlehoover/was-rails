@@ -45,7 +45,7 @@ describe Import, type: :model do
       allow(import).to receive(:file).and_return(file)
       allow(CSV).to receive(:parse).and_return(csv_rows)
       allow(Recipient).to receive(:create).and_return(recipient1, recipient2)
-      allow(WASLogger).to receive(:json)
+      allow(ExternalLogger).to receive(:json)
     end
 
     context 'when ALL recipients are successfully created' do
@@ -54,16 +54,16 @@ describe Import, type: :model do
       before { import_recipients }
 
       it 'logs success for the import' do
-        expect(WASLogger)
+        expect(ExternalLogger)
           .to have_received(:json)
           .with(action: :import_recipients, actor: :administrator, status: :succeeded, params: import.attributes)
       end
 
       it 'logs success for each recipient' do
-        expect(WASLogger)
+        expect(ExternalLogger)
           .to have_received(:json)
           .with(action: :create_recipient, actor: :administrator, status: :succeeded, params: recipient1_attributes)
-        expect(WASLogger)
+        expect(ExternalLogger)
           .to have_received(:json)
           .with(action: :create_recipient, actor: :administrator, status: :succeeded, params: recipient2_attributes)
       end
@@ -81,7 +81,7 @@ describe Import, type: :model do
       end
 
       it 'logs failure for the import' do
-        expect(WASLogger)
+        expect(ExternalLogger)
           .to have_received(:json)
           .with(
             action: :import_recipients,
@@ -93,7 +93,7 @@ describe Import, type: :model do
       end
 
       it 'logs failure for each failed recipient' do
-        expect(WASLogger)
+        expect(ExternalLogger)
           .to have_received(:json)
           .with(
             action: :create_recipient,

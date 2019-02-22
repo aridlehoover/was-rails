@@ -13,9 +13,9 @@ class Source < ApplicationRecord
     failed_alerts = alerts.reject(&:persisted?)
 
     if failed_alerts.none?
-      WASLogger.json(action: :import_alerts, actor: :administrator, status: :succeeded, params: attributes)
+      ExternalLogger.json(action: :import_alerts, actor: :administrator, status: :succeeded, params: attributes)
     else
-      WASLogger.json(
+      ExternalLogger.json(
         action: :import_alerts,
         actor: :administrator,
         status: :failed,
@@ -30,9 +30,9 @@ class Source < ApplicationRecord
     alert = Alert.create(alert_attributes(item))
 
     if alert.persisted?
-      WASLogger.json(action: :create_alert, actor: :administrator, status: :succeeded, params: alert.attributes)
+      ExternalLogger.json(action: :create_alert, actor: :administrator, status: :succeeded, params: alert.attributes)
     else
-      WASLogger.json(
+      ExternalLogger.json(
         action: :create_alert,
         actor: :administrator,
         status: :failed,

@@ -12,7 +12,7 @@ describe SQSWorker do
     let(:attributes) { {} }
 
     before do
-      allow(WASLogger).to receive(:json)
+      allow(ExternalLogger).to receive(:json)
     end
 
     context 'when the type is create_alert' do
@@ -51,7 +51,7 @@ describe SQSWorker do
         end
 
         it 'logs failure' do
-          expect(WASLogger).to have_received(:json).with(
+          expect(ExternalLogger).to have_received(:json).with(
             action: :create_alert,
             actor: :telemetry,
             status: :failed,
@@ -71,7 +71,7 @@ describe SQSWorker do
         end
 
         it 'logs success' do
-          expect(WASLogger).to have_received(:json).with(
+          expect(ExternalLogger).to have_received(:json).with(
             action: :create_alert,
             actor: :telemetry,
             status: :succeeded,
@@ -111,7 +111,7 @@ describe SQSWorker do
         end
 
         it 'logs failure' do
-          expect(WASLogger).to have_received(:json).with(
+          expect(ExternalLogger).to have_received(:json).with(
             action: :create_recipient,
             actor: :telecom,
             status: :failed,
@@ -131,7 +131,7 @@ describe SQSWorker do
         end
 
         it 'logs success' do
-          expect(WASLogger).to have_received(:json).with(
+          expect(ExternalLogger).to have_received(:json).with(
             action: :create_recipient,
             actor: :telecom,
             status: :succeeded,
@@ -161,7 +161,7 @@ describe SQSWorker do
         before { perform }
 
         it 'logs failure' do
-          expect(WASLogger).to have_received(:json).with(
+          expect(ExternalLogger).to have_received(:json).with(
             action: :unsubscribe_recipient,
             actor: :telecom,
             status: :failed,
@@ -184,7 +184,7 @@ describe SQSWorker do
         end
 
         it 'logs success' do
-          expect(WASLogger).to have_received(:json).with(
+          expect(ExternalLogger).to have_received(:json).with(
             action: :unsubscribe_recipient,
             actor: :telecom,
             status: :succeeded,

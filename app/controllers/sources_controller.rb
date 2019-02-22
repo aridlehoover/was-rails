@@ -19,10 +19,10 @@ class SourcesController < ApplicationController
     @source = Source.create(source_params)
 
     if @source.persisted?
-      WASLogger.json(action: :create_source, actor: :administrator, status: :succeeded, params: source_params.to_h)
+      ExternalLogger.json(action: :create_source, actor: :administrator, status: :succeeded, params: source_params.to_h)
       redirect_to @source, notice: 'Source was successfully created.'
     else
-      WASLogger.json(
+      ExternalLogger.json(
         action: :create_source,
         actor: :administrator,
         status: :failed,
@@ -35,10 +35,10 @@ class SourcesController < ApplicationController
 
   def update
     if @source.update(source_params)
-      WASLogger.json(action: :update_source, actor: :administrator, status: :succeeded, params: source_params.to_h)
+      ExternalLogger.json(action: :update_source, actor: :administrator, status: :succeeded, params: source_params.to_h)
       redirect_to @source, notice: 'Source was successfully updated.'
     else
-      WASLogger.json(
+      ExternalLogger.json(
         action: :update_source,
         actor: :administrator,
         status: :failed,
@@ -51,7 +51,7 @@ class SourcesController < ApplicationController
 
   def destroy
     @source.destroy
-    WASLogger.json(action: :destroy_source, actor: :administrator, status: :succeeded, params: { id: id })
+    ExternalLogger.json(action: :destroy_source, actor: :administrator, status: :succeeded, params: { id: id })
     redirect_to sources_url, notice: 'Source was successfully destroyed.'
   end
 

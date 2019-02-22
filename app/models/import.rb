@@ -22,9 +22,9 @@ class Import < ApplicationRecord
     failed_recipients = recipients.compact.reject(&:persisted?)
 
     if failed_recipients.none?
-      WASLogger.json(action: :import_recipients, actor: :administrator, status: :succeeded, params: attributes)
+      ExternalLogger.json(action: :import_recipients, actor: :administrator, status: :succeeded, params: attributes)
     else
-      WASLogger.json(
+      ExternalLogger.json(
         action: :import_recipients,
         actor: :administrator,
         status: :failed,
@@ -40,9 +40,9 @@ class Import < ApplicationRecord
     recipient = Recipient.create(channel: channel.downcase, address: address)
 
     if recipient.persisted?
-      WASLogger.json(action: :create_recipient, actor: :administrator, status: :succeeded, params: recipient.attributes)
+      ExternalLogger.json(action: :create_recipient, actor: :administrator, status: :succeeded, params: recipient.attributes)
     else
-      WASLogger.json(
+      ExternalLogger.json(
         action: :create_recipient,
         actor: :administrator,
         status: :failed,

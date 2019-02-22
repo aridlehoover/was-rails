@@ -6,7 +6,7 @@ describe AlertsController, type: :controller do
   let(:valid_session) { {} }
 
   before do
-    allow(WASLogger).to receive(:json)
+    allow(ExternalLogger).to receive(:json)
   end
 
   describe "GET #index" do

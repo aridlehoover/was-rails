@@ -19,10 +19,10 @@ class AlertsController < ApplicationController
     @alert = Alert.create(alert_params)
 
     if @alert.persisted?
-      WASLogger.json(action: :create_alert, actor: :administrator, status: :succeeded, params: alert_params.to_h)
+      ExternalLogger.json(action: :create_alert, actor: :administrator, status: :succeeded, params: alert_params.to_h)
       redirect_to @alert, notice: 'Alert was successfully created.'
     else
-      WASLogger.json(
+      ExternalLogger.json(
         action: :create_alert,
         actor: :administrator,
         status: :failed,
@@ -35,10 +35,10 @@ class AlertsController < ApplicationController
 
   def update
     if @alert.update(alert_params)
-      WASLogger.json(action: :update_alert, actor: :administrator, status: :succeeded, params: alert_params.to_h)
+      ExternalLogger.json(action: :update_alert, actor: :administrator, status: :succeeded, params: alert_params.to_h)
       redirect_to @alert, notice: 'Alert was successfully updated.'
     else
-      WASLogger.json(
+      ExternalLogger.json(
         action: :update_alert,
         actor: :administrator,
         status: :failed,
@@ -51,7 +51,7 @@ class AlertsController < ApplicationController
 
   def destroy
     @alert.destroy
-    WASLogger.json(action: :destroy_alert, actor: :administrator, status: :succeeded, params: { id: id })
+    ExternalLogger.json(action: :destroy_alert, actor: :administrator, status: :succeeded, params: { id: id })
     redirect_to alerts_url, notice: 'Alert was successfully destroyed.'
   end
 

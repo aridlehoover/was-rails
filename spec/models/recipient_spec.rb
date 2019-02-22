@@ -35,13 +35,13 @@ describe Recipient, type: :model do
     let(:alert) { Alert.new(title: 'Title') }
 
     before do
-      allow(WASLogger).to receive(:json)
+      allow(ExternalLogger).to receive(:json)
     end
 
     it 'logs success' do
       notify
 
-      expect(WASLogger).to have_received(:json).with(
+      expect(ExternalLogger).to have_received(:json).with(
         action: :recipient_notified,
         status: :succeeded,
         params: { channel: channel, address: address, alert: alert.attributes }
