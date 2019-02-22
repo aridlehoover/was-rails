@@ -139,6 +139,15 @@ describe Source, type: :model do
         )
       end
       let(:persisted?) { true }
+      let(:alert_attributes) do
+        {
+          uuid: 'uuid',
+          title: 'título - ubicación',
+          location: 'ubicación',
+          message: 'resumen',
+          publish_at: 'publicación'
+        }
+      end
 
       it 'logs success for the import' do
         expect(WASLogger)
@@ -149,7 +158,7 @@ describe Source, type: :model do
       it 'logs success for each created alert' do
         expect(WASLogger)
           .to have_received(:json)
-          .with(action: :create_alert, actor: :administrator, status: :succeeded, params: alert.attributes)
+          .with(action: :create_alert, actor: :administrator, status: :succeeded, params: alert_attributes)
       end
     end
 
@@ -164,8 +173,16 @@ describe Source, type: :model do
           updated: 'publicación'
         )
       end
+      let(:alert_attributes) do
+        {
+          uuid: nil,
+          title: 'título - ubicación',
+          location: 'ubicación',
+          message: 'resumen',
+          publish_at: 'publicación'
+        }
+      end
       let(:persisted?) { false }
-      let(:alert_attributes) { { uuid: nil } }
 
       it 'logs failure for the import' do
         expect(WASLogger).to have_received(:json).with(
@@ -184,7 +201,7 @@ describe Source, type: :model do
             action: :create_alert,
             actor: :administrator,
             status: :failed,
-            params: alert.attributes,
+            params: alert_attributes,
             errors: error_messages
           )
       end

@@ -9,7 +9,7 @@ class Source < ApplicationRecord
   end
 
   def import_alerts
-    alerts = parsed_feed_data.items.map { |item| create_alert(item) }
+    alerts = parsed_feed_data.items.compact.map { |item| create_alert(item) }
     failed_alerts = alerts.reject(&:persisted?)
 
     if failed_alerts.none?
