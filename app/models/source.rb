@@ -19,8 +19,7 @@ class Source < ApplicationRecord
         action: :import_alerts,
         actor: :administrator,
         status: :failed,
-        params: attributes,
-        failed_alerts: failed_alerts.map(&:attributes)
+        params: attributes
       )
     end
   end

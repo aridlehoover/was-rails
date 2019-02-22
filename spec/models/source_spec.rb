@@ -189,8 +189,7 @@ describe Source, type: :model do
           action: :import_alerts,
           actor: :administrator,
           status: :failed,
-          params: source.attributes,
-          failed_alerts: [alert_attributes]
+          params: source.attributes
         )
       end
 
