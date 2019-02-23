@@ -24,21 +24,22 @@ class Source < ApplicationRecord
   private
 
   def create_alert(item)
-    alert = Alert.create(alert_attributes(item))
+    params = alert_attributes(item)
+    alert = Alert.create(params)
 
     if alert.persisted?
       ExternalLogger.json(
         action: :create_alert,
         actor: :administrator,
         status: :succeeded,
-        params: alert.attributes
+        params: params
       )
     else
       ExternalLogger.json(
         action: :create_alert,
         actor: :administrator,
         status: :failed,
-        params: alert.attributes,
+        params: params,
         errors: alert.errors.messages
       )
     end
