@@ -22,10 +22,21 @@ class SQSWorker
   def create_alert
     alert = Alert.create(@body.slice(*Alert::ALLOWED_ATTRIBUTES))
     if alert.persisted?
-      ExternalLogger.json(action: :create_alert, actor: :telemetry, status: :succeeded, params: @body)
+      ExternalLogger.json(
+        action: :create_alert,
+        actor: :telemetry,
+        status: :succeeded,
+        params: @body
+      )
       @sqs_message.delete
     else
-      ExternalLogger.json(action: :create_alert, actor: :telemetry, status: :failed, params: @body, errors: alert.errors.messages)
+      ExternalLogger.json(
+        action: :create_alert,
+        actor: :telemetry,
+        status: :failed,
+        params: @body,
+        errors: alert.errors.messages
+      )
     end
   end
 

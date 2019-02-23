@@ -12,16 +12,13 @@ class Source < ApplicationRecord
     alerts = parsed_feed_data.items.compact.map { |item| create_alert(item) }
     failed_alerts = alerts.reject(&:persisted?)
 
-    if failed_alerts.none?
-      ExternalLogger.json(action: :import_alerts, actor: :administrator, status: :succeeded, params: attributes)
-    else
-      ExternalLogger.json(
-        action: :import_alerts,
-        actor: :administrator,
-        status: :failed,
-        params: attributes
-      )
-    end
+    status = failed_alerts.none? ? :succeeded : :failed
+    ExternalLogger.json(
+      action: :import_alerts,
+      actor: :administrator,
+      status: status,
+      params: attributes
+    )
   end
 
   private
@@ -30,7 +27,12 @@ class Source < ApplicationRecord
     alert = Alert.create(alert_attributes(item))
 
     if alert.persisted?
-      ExternalLogger.json(action: :create_alert, actor: :administrator, status: :succeeded, params: alert.attributes)
+      ExternalLogger.json(
+        action: :create_alert,
+        actor: :administrator,
+        status: :succeeded,
+        params: alert.attributes
+      )
     else
       ExternalLogger.json(
         action: :create_alert,

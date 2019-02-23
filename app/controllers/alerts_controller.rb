@@ -19,7 +19,12 @@ class AlertsController < ApplicationController
     @alert = Alert.create(alert_params)
 
     if @alert.persisted?
-      ExternalLogger.json(action: :create_alert, actor: :administrator, status: :succeeded, params: alert_params.to_h)
+      ExternalLogger.json(
+        action: :create_alert,
+        actor: :administrator,
+        status: :succeeded,
+        params: alert_params.to_h
+      )
       redirect_to @alert, notice: 'Alert was successfully created.'
     else
       ExternalLogger.json(
