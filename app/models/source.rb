@@ -13,7 +13,7 @@ class Source < ApplicationRecord
     failed_alerts = alerts.reject(&:persisted?)
 
     status = failed_alerts.none? ? :succeeded : :failed
-    ExternalLogger.json(
+    ExternalLogger.log_and_increment(
       action: :import_alerts,
       actor: :administrator,
       status: status,
@@ -28,14 +28,14 @@ class Source < ApplicationRecord
     alert = Alert.create(params)
 
     if alert.persisted?
-      ExternalLogger.json(
+      ExternalLogger.log_and_increment(
         action: :create_alert,
         actor: :administrator,
         status: :succeeded,
         params: params
       )
     else
-      ExternalLogger.json(
+      ExternalLogger.log_and_increment(
         action: :create_alert,
         actor: :administrator,
         status: :failed,

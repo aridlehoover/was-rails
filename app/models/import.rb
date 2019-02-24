@@ -22,9 +22,9 @@ class Import < ApplicationRecord
     failed_recipients = recipients.compact.reject(&:persisted?)
 
     if failed_recipients.none?
-      ExternalLogger.json(action: :import_recipients, actor: :administrator, status: :succeeded, params: attributes)
+      ExternalLogger.log_and_increment(action: :import_recipients, actor: :administrator, status: :succeeded, params: attributes)
     else
-      ExternalLogger.json(
+      ExternalLogger.log_and_increment(
         action: :import_recipients,
         actor: :administrator,
         status: :failed,
@@ -40,9 +40,9 @@ class Import < ApplicationRecord
     recipient = Recipient.create(channel: channel.downcase, address: address)
 
     if recipient.persisted?
-      ExternalLogger.json(action: :create_recipient, actor: :administrator, status: :succeeded, params: recipient.attributes)
+      ExternalLogger.log_and_increment(action: :create_recipient, actor: :administrator, status: :succeeded, params: recipient.attributes)
     else
-      ExternalLogger.json(
+      ExternalLogger.log_and_increment(
         action: :create_recipient,
         actor: :administrator,
         status: :failed,

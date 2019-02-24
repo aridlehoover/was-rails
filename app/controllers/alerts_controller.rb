@@ -3,14 +3,14 @@ class AlertsController < ApplicationController
     @alerts = Alert.order(id: :desc).page(params[:page])
 
     if @alerts.any?
-      ExternalLogger.json(
+      ExternalLogger.log_and_increment(
         action: :find_alerts,
         actor: :administrator,
         status: :succeeded,
         params: params
       )
     else
-      ExternalLogger.json(
+      ExternalLogger.log_and_increment(
         action: :find_alerts,
         actor: :administrator,
         status: :not_found,
@@ -23,14 +23,14 @@ class AlertsController < ApplicationController
     @alert = Alert.find_by(id: id)
 
     if @alert.present?
-      ExternalLogger.json(
+      ExternalLogger.log_and_increment(
         action: :find_alert,
         actor: :administrator,
         status: :succeeded,
         params: params
       )
     else
-      ExternalLogger.json(
+      ExternalLogger.log_and_increment(
         action: :find_alert,
         actor: :administrator,
         status: :not_found,
@@ -43,7 +43,7 @@ class AlertsController < ApplicationController
   def new
     @alert = Alert.new
 
-    ExternalLogger.json(
+    ExternalLogger.log_and_increment(
       action: :new_alert,
       actor: :administrator,
       status: :succeeded
@@ -54,7 +54,7 @@ class AlertsController < ApplicationController
     @alert = Alert.find_by(id: id)
 
     if @alert.present?
-      ExternalLogger.json(
+      ExternalLogger.log_and_increment(
         action: :edit_alert,
         actor: :administrator,
         status: :succeeded,
@@ -74,7 +74,7 @@ class AlertsController < ApplicationController
   def create
     @alert = Alert.create(alert_params)
     if @alert.persisted?
-      ExternalLogger.json(
+      ExternalLogger.log_and_increment(
         action: :create_alert,
         actor: :administrator,
         status: :succeeded,
@@ -82,7 +82,7 @@ class AlertsController < ApplicationController
       )
       redirect_to @alert, notice: 'Alert was successfully created.'
     else
-      ExternalLogger.json(
+      ExternalLogger.log_and_increment(
         action: :create_alert,
         actor: :administrator,
         status: :failed,
@@ -98,7 +98,7 @@ class AlertsController < ApplicationController
 
     if @alert.present?
       if @alert.update(alert_params)
-        ExternalLogger.json(
+        ExternalLogger.log_and_increment(
           action: :update_alert,
           actor: :administrator,
           status: :succeeded,
@@ -106,7 +106,7 @@ class AlertsController < ApplicationController
         )
         redirect_to @alert, notice: 'Alert was successfully updated.'
       else
-        ExternalLogger.json(
+        ExternalLogger.log_and_increment(
           action: :update_alert,
           actor: :administrator,
           status: :failed,
@@ -116,7 +116,7 @@ class AlertsController < ApplicationController
         render :edit
       end
     else
-      ExternalLogger.json(
+      ExternalLogger.log_and_increment(
         action: :update_alert,
         actor: :administrator,
         status: :not_found,
@@ -131,7 +131,7 @@ class AlertsController < ApplicationController
 
     if @alert.present?
       @alert.destroy
-      ExternalLogger.json(
+      ExternalLogger.log_and_increment(
         action: :destroy_alert,
         actor: :administrator,
         status: :succeeded,
@@ -139,7 +139,7 @@ class AlertsController < ApplicationController
       )
       redirect_to alerts_url, notice: 'Alert was successfully destroyed.'
     else
-      ExternalLogger.json(
+      ExternalLogger.log_and_increment(
         action: :destroy_alert,
         actor: :administrator,
         status: :not_found,

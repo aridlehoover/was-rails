@@ -23,7 +23,7 @@ class SQSWorker
     params = @body.slice(*Alert::ALLOWED_ATTRIBUTES)
     alert = Alert.create(params)
     if alert.persisted?
-      ExternalLogger.json(
+      ExternalLogger.log_and_increment(
         action: :create_alert,
         actor: :telemetry,
         status: :succeeded,
@@ -31,7 +31,7 @@ class SQSWorker
       )
       @sqs_message.delete
     else
-      ExternalLogger.json(
+      ExternalLogger.log_and_increment(
         action: :create_alert,
         actor: :telemetry,
         status: :failed,
@@ -44,10 +44,10 @@ class SQSWorker
   def create_recipient
     recipient = Recipient.create(@body.slice(*Recipient::ALLOWED_ATTRIBUTES))
     if recipient.persisted?
-      ExternalLogger.json(action: :create_recipient, actor: :telecom, status: :succeeded, params: @body)
+      ExternalLogger.log_and_increment(action: :create_recipient, actor: :telecom, status: :succeeded, params: @body)
       @sqs_message.delete
     else
-      ExternalLogger.json(action: :create_recipient, actor: :telecom, status: :failed, params: @body, errors: recipient.errors.messages)
+      ExternalLogger.log_and_increment(action: :create_recipient, actor: :telecom, status: :failed, params: @body, errors: recipient.errors.messages)
     end
   end
 
@@ -56,9 +56,9 @@ class SQSWorker
 
     if recipient.present?
       recipient.destroy
-      ExternalLogger.json(action: :unsubscribe_recipient, actor: :telecom, status: :succeeded, params: @body)
+      ExternalLogger.log_and_increment(action: :unsubscribe_recipient, actor: :telecom, status: :succeeded, params: @body)
     else
-      ExternalLogger.json(action: :unsubscribe_recipient, actor: :telecom, status: :failed, params: @body)
+      ExternalLogger.log_and_increment(action: :unsubscribe_recipient, actor: :telecom, status: :failed, params: @body)
     end
 
     @sqs_message.delete
