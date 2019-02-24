@@ -20,7 +20,8 @@ class SQSWorker
   private
 
   def create_alert
-    alert = Alert.create(@body.slice(*Alert::ALLOWED_ATTRIBUTES))
+    params = @body.slice(*Alert::ALLOWED_ATTRIBUTES)
+    alert = Alert.create(params)
     if alert.persisted?
       ExternalLogger.json(
         action: :create_alert,
