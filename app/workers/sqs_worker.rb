@@ -19,15 +19,18 @@ class SQSWorker
 
   private
 
+  def params
+    @params ||= @body.except('type')
+  end
+
   def create_alert
-    params = @body.slice(*Alert::ALLOWED_ATTRIBUTES)
     alert = Alert.create(params)
     if alert.persisted?
       ExternalLogger.log_and_increment(
         action: :create_alert,
         actor: :telemetry,
         status: :succeeded,
-        params: @body
+        params: params
       )
       @sqs_message.delete
     else
@@ -35,20 +38,20 @@ class SQSWorker
         action: :create_alert,
         actor: :telemetry,
         status: :failed,
-        params: @body,
+        params: params,
         errors: alert.errors.messages
       )
     end
   end
 
   def create_recipient
-    recipient = Recipient.create(@body.slice(*Recipient::ALLOWED_ATTRIBUTES))
+    recipient = Recipient.create(params)
     if recipient.persisted?
       ExternalLogger.log_and_increment(
         action: :create_recipient,
         actor: :telecom,
         status: :succeeded,
-        params: @body
+        params: params
       )
       @sqs_message.delete
     else
@@ -56,14 +59,14 @@ class SQSWorker
         action: :create_recipient,
         actor: :telecom,
         status: :failed,
-        params: @body,
+        params: params,
         errors: recipient.errors.messages
       )
     end
   end
 
   def unsubscribe_recipient
-    recipient = Recipient.find_by(@body)
+    recipient = Recipient.find_by(params)
 
     if recipient.present?
       recipient.destroy
@@ -71,14 +74,14 @@ class SQSWorker
         action: :unsubscribe_recipient,
         actor: :telecom,
         status: :succeeded,
-        params: @body
+        params: params
       )
     else
       ExternalLogger.log_and_increment(
         action: :unsubscribe_recipient,
         actor: :telecom,
         status: :failed,
-        params: @body
+        params: params
       )
     end
 

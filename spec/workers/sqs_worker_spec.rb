@@ -55,7 +55,7 @@ describe SQSWorker do
             action: :create_alert,
             actor: :telemetry,
             status: :failed,
-            params: body,
+            params: attributes,
             errors: alert_error_messages
           )
         end
@@ -75,7 +75,7 @@ describe SQSWorker do
             action: :create_alert,
             actor: :telemetry,
             status: :succeeded,
-            params: body
+            params: attributes
           )
         end
       end
@@ -115,7 +115,7 @@ describe SQSWorker do
             action: :create_recipient,
             actor: :telecom,
             status: :failed,
-            params: body,
+            params: attributes,
             errors: recipient_error_messages
           )
         end
@@ -135,7 +135,7 @@ describe SQSWorker do
             action: :create_recipient,
             actor: :telecom,
             status: :succeeded,
-            params: body
+            params: attributes
           )
         end
       end
@@ -165,7 +165,7 @@ describe SQSWorker do
             action: :unsubscribe_recipient,
             actor: :telecom,
             status: :failed,
-            params: body
+            params: attributes
           )
         end
       end
@@ -188,7 +188,7 @@ describe SQSWorker do
             action: :unsubscribe_recipient,
             actor: :telecom,
             status: :succeeded,
-            params: body
+            params: attributes
           )
         end
       end
