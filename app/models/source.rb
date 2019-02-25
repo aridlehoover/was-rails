@@ -27,15 +27,7 @@ class Source < ApplicationRecord
     params = alert_attributes(item)
     log_adapter = LogAdapter.new(params)
 
-    alert = Alert.create(params)
-
-    if alert.persisted?
-      log_adapter.operation_succeeded
-    else
-      log_adapter.operation_failed(alert)
-    end
-
-    alert
+    CreateAlertOperation.new(params, log_adapter).perform
   end
 
   def raw_feed_data
