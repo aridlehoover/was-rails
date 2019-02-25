@@ -9,6 +9,10 @@ The purpose of this application is to demonstrate how The Rails Way™
 obscures business/domain logic, making it difficult to know what an
 application is doing and where it is doing it.
 
+The master branch represents the application in its Rails-iest form.
+Other branches represent various refactors along the path to a more
+hexagonal architecture using the Ports & Adapters design pattern.
+
 ## Backlog
 
 As an administrator,
