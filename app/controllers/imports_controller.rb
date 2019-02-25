@@ -4,10 +4,20 @@ class ImportsController < ApplicationController
     @import.file.attach(params[:import][:file])
 
     if @import.save
-      ExternalLogger.log_and_increment(action: :create_import, actor: :administrator, status: :succeeded, params: import_params.to_h)
+      ExternalLogger.log_and_increment(
+        action: :create_import,
+        actor: :administrator,
+        status: :succeeded,
+        params: import_params.to_h
+      )
       redirect_to '/', notice: 'Import saved!'
     else
-      ExternalLogger.log_and_increment(action: :create_import, actor: :administrator, status: :failed, params: import_params.to_h)
+      ExternalLogger.log_and_increment(
+        action: :create_import,
+        actor: :administrator,
+        status: :failed,
+        params: import_params.to_h
+      )
       render :new
     end
   end
