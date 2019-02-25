@@ -25,23 +25,14 @@ class Source < ApplicationRecord
 
   def create_alert(item)
     params = alert_attributes(item)
+    log_adapter = LogAdapter.new(params)
+
     alert = Alert.create(params)
 
     if alert.persisted?
-      ExternalLogger.log_and_increment(
-        action: :create_alert,
-        actor: :administrator,
-        status: :succeeded,
-        params: params
-      )
+      log_adapter.operation_succeeded
     else
-      ExternalLogger.log_and_increment(
-        action: :create_alert,
-        actor: :administrator,
-        status: :failed,
-        params: params,
-        errors: alert.errors.messages
-      )
+      log_adapter.operation_failed(alert)
     end
 
     alert
