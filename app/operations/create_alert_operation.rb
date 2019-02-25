@@ -1,18 +1,18 @@
 class CreateAlertOperation
-  attr_reader :params, :adapter
+  attr_reader :params, :adapters
 
-  def initialize(params, adapter)
+  def initialize(params, adapters)
     @params = params
-    @adapter = adapter
+    @adapters = Array.wrap(adapters).compact
   end
 
   def perform
     alert = Alert.create(params)
 
     if alert.persisted?
-      adapter.operation_succeeded
+      adapters.each { |adapter| adapter.operation_succeeded }
     else
-      adapter.operation_failed(alert)
+      adapters.each { |adapter| adapter.operation_failed(alert) }
     end
 
     alert

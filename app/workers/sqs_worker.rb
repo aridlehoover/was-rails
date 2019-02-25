@@ -25,14 +25,9 @@ class SQSWorker
 
   def create_alert
     log_adapter = LogAdapter.new(params, actor: :telemetry)
+    sqs_adapter = SQSAdapter.new(@sqs_message)
 
-    alert = Alert.create(params)
-    if alert.persisted?
-      log_adapter.operation_succeeded
-      @sqs_message.delete
-    else
-      log_adapter.operation_failed(alert)
-    end
+    CreateAlertOperation.new(params, [log_adapter, sqs_adapter]).perform
   end
 
   def create_recipient
