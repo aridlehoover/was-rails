@@ -24,23 +24,14 @@ class SQSWorker
   end
 
   def create_alert
+    log_adapter = LogAdapter.new(params, actor: :telemetry)
+
     alert = Alert.create(params)
     if alert.persisted?
-      ExternalLogger.log_and_increment(
-        action: :create_alert,
-        actor: :telemetry,
-        status: :succeeded,
-        params: params
-      )
+      log_adapter.operation_succeeded
       @sqs_message.delete
     else
-      ExternalLogger.log_and_increment(
-        action: :create_alert,
-        actor: :telemetry,
-        status: :failed,
-        params: params,
-        errors: alert.errors.messages
-      )
+      log_adapter.operation_failed(alert)
     end
   end
 
