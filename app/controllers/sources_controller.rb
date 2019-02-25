@@ -1,6 +1,4 @@
 class SourcesController < ApplicationController
-  before_action :set_source, only: [:show, :edit, :update, :destroy]
-
   def index
     @sources = Source.page(params[:page])
 
@@ -107,7 +105,7 @@ class SourcesController < ApplicationController
           status: :succeeded,
           params: params
         )
-        redirect_to @source, notice: 'Alert was successfully updated.'
+        redirect_to @source, notice: 'Source was successfully updated.'
       else
         ExternalLogger.log_and_increment(
           action: :update_source,
@@ -130,14 +128,26 @@ class SourcesController < ApplicationController
   end
 
   def destroy
-    @source.destroy
-    ExternalLogger.log_and_increment(
-      action: :destroy_source,
-      actor: :administrator,
-      status: :succeeded,
-      params: { id: id }
-    )
-    redirect_to sources_url, notice: 'Source was successfully destroyed.'
+    @source = Source.find_by(id: id)
+
+    if @source.present?
+      @source.destroy
+      ExternalLogger.log_and_increment(
+        action: :destroy_source,
+        actor: :administrator,
+        status: :succeeded,
+        params: { id: id }
+      )
+      redirect_to sources_url, notice: 'Source was successfully destroyed.'
+    else
+      ExternalLogger.log_and_increment(
+        action: :destroy_source,
+        actor: :administrator,
+        status: :not_found,
+        params: { id: id }
+      )
+      render status: :not_found
+    end
   end
 
   private

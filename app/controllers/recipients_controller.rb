@@ -105,7 +105,7 @@ class RecipientsController < ApplicationController
           status: :succeeded,
           params: params
         )
-        redirect_to @recipient, notice: 'Alert was successfully updated.'
+        redirect_to @recipient, notice: 'Recipient was successfully updated.'
       else
         ExternalLogger.log_and_increment(
           action: :update_recipient,
@@ -128,14 +128,26 @@ class RecipientsController < ApplicationController
   end
 
   def destroy
-    @recipient.destroy
-    ExternalLogger.log_and_increment(
-      action: :destroy_recipient,
-      actor: :administrator,
-      status: :succeeded,
-      params: { id: id }
-    )
-    redirect_to recipients_url, notice: 'Recipient was successfully destroyed.'
+    @recipient = Recipient.find_by(id: id)
+
+    if @recipient.present?
+      @recipient.destroy
+      ExternalLogger.log_and_increment(
+        action: :destroy_recipient,
+        actor: :administrator,
+        status: :succeeded,
+        params: { id: id }
+      )
+      redirect_to recipients_url, notice: 'Recipient was successfully destroyed.'
+    else
+      ExternalLogger.log_and_increment(
+        action: :destroy_recipient,
+        actor: :administrator,
+        status: :not_found,
+        params: { id: id }
+      )
+      render status: :not_found
+    end
   end
 
   private
