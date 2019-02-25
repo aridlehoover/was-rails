@@ -72,23 +72,14 @@ class AlertsController < ApplicationController
   end
 
   def create
+    log_adapter = LogAdapter.new(alert_params)
+
     @alert = Alert.create(alert_params)
     if @alert.persisted?
-      ExternalLogger.log_and_increment(
-        action: :create_alert,
-        actor: :administrator,
-        status: :succeeded,
-        params: alert_params.to_h
-      )
+      log_adapter.operation_succeeded
       redirect_to @alert, notice: 'Alert was successfully created.'
     else
-      ExternalLogger.log_and_increment(
-        action: :create_alert,
-        actor: :administrator,
-        status: :failed,
-        params: alert_params.to_h,
-        errors: @alert.errors.messages
-      )
+      log_adapter.operation_failed(@alert)
       render :new
     end
   end
