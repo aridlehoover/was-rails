@@ -77,7 +77,12 @@ class SourcesController < ApplicationController
     @source = Source.create(source_params)
 
     if @source.persisted?
-      ExternalLogger.log_and_increment(action: :create_source, actor: :administrator, status: :succeeded, params: source_params.to_h)
+      ExternalLogger.log_and_increment(
+        action: :create_source,
+        actor: :administrator,
+        status: :succeeded,
+        params: source_params.to_h
+      )
       redirect_to @source, notice: 'Source was successfully created.'
     else
       ExternalLogger.log_and_increment(

@@ -30,7 +30,13 @@ class Recipient < ApplicationRecord
       send_via_slack(address, alert.title)
     end
 
-    ExternalLogger.log_and_increment(action: :recipient_notified, status: :succeeded, params: { channel: channel, address: address, alert: alert.attributes })
+    ExternalLogger.log_and_increment(
+      action: :recipient_notified,
+      status: :succeeded,
+      params: {
+        channel: channel, address: address, alert: alert.attributes
+      }
+    )
   end
 
   private
