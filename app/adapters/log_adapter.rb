@@ -6,7 +6,7 @@ class LogAdapter
     @options = options
   end
 
-  def operation_succeeded
+  def operation_succeeded(_alert)
     ExternalLogger.log_and_increment(
       {
         action: :create_alert,

@@ -10,7 +10,7 @@ class CreateAlertOperation
     alert = Alert.create(params)
 
     if alert.persisted?
-      adapters.each { |adapter| adapter.operation_succeeded }
+      adapters.each { |adapter| adapter.operation_succeeded(alert) }
     else
       adapters.each { |adapter| adapter.operation_failed(alert) }
     end

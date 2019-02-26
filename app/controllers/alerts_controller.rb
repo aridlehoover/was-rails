@@ -73,15 +73,9 @@ class AlertsController < ApplicationController
 
   def create
     log_adapter = LogAdapter.new(alert_params)
+    controller_adapter = ControllerAdapter.new(self)
 
-    @alert = Alert.create(alert_params)
-    if @alert.persisted?
-      log_adapter.operation_succeeded
-      redirect_to @alert, notice: 'Alert was successfully created.'
-    else
-      log_adapter.operation_failed(@alert)
-      render :new
-    end
+    CreateAlertOperation.new(alert_params, [log_adapter, controller_adapter]).perform
   end
 
   def update
