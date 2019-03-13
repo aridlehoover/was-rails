@@ -1,4 +1,4 @@
-class CreateAlertOperation
+class CreateAlertCommand
   attr_reader :params, :adapters
 
   def initialize(params, adapters)

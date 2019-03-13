@@ -5,10 +5,10 @@ class SQSAdapter
     @message = message
   end
 
-  def operation_succeeded(_alert)
+  def operation_succeeded(_record)
     message.delete
   end
 
-  def operation_failed(alert)
+  def operation_failed(record)
   end
 end

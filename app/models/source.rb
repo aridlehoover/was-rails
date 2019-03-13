@@ -25,9 +25,9 @@ class Source < ApplicationRecord
 
   def create_alert(item)
     params = alert_attributes(item)
-    log_adapter = LogAdapter.new(params)
+    log_adapter = LogAdapter.new(:create_alert, params)
 
-    CreateAlertOperation.new(params, log_adapter).perform
+    CreateAlertCommand.new(params, log_adapter).perform
   end
 
   def raw_feed_data

@@ -24,10 +24,10 @@ class SQSWorker
   end
 
   def create_alert
-    log_adapter = LogAdapter.new(params, actor: :telemetry)
+    log_adapter = LogAdapter.new(:create_alert, params, actor: :telemetry)
     sqs_adapter = SQSAdapter.new(@sqs_message)
 
-    CreateAlertOperation.new(params, [log_adapter, sqs_adapter]).perform
+    CreateAlertCommand.new(params, [log_adapter, sqs_adapter]).perform
   end
 
   def create_recipient

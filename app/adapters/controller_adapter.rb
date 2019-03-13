@@ -7,11 +7,11 @@ class ControllerAdapter
 
   delegate :redirect_to, :render, to: :controller
 
-  def operation_succeeded(alert)
-    redirect_to alert, notice: 'Alert was successfully created.'
+  def operation_succeeded(record)
+    redirect_to record, notice: "#{record.class.name} was successfully created."
   end
 
-  def operation_failed(alert)
-    render :new, locals: { alert: alert }
+  def operation_failed(record)
+    render :new, locals: { record: record }
   end
 end
