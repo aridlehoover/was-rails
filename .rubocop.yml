@@ -20,10 +20,6 @@ AllCops:
 Documentation:
   Enabled: false
 
-FactoryBot/StaticAttributeDefinedDynamically:
-  Exclude:
-    - spec/factories/db/*
-
 Rails:
   Enabled: true
 
