@@ -164,7 +164,7 @@ describe SQSWorker do
           expect(ExternalLogger).to have_received(:json).with(
             action: :unsubscribe_recipient,
             actor: :telecom,
-            status: :failed,
+            status: :not_found,
             params: attributes
           )
         end

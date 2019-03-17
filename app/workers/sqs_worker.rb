@@ -66,7 +66,7 @@ class SQSWorker
       ExternalLogger.log_and_increment(
         action: :unsubscribe_recipient,
         actor: :telecom,
-        status: :failed,
+        status: :not_found,
         params: params
       )
     end
