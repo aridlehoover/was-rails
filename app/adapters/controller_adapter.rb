@@ -7,11 +7,11 @@ class ControllerAdapter
 
   delegate :redirect_to, :render, to: :controller
 
-  def operation_succeeded(record)
+  def succeeded(record)
     redirect_to record, notice: "#{record.class.name} was successfully created."
   end
 
-  def operation_failed(record)
+  def failed(record)
     render :new, locals: { record: record }
   end
 end

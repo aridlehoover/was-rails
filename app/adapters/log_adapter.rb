@@ -7,7 +7,7 @@ class LogAdapter
     @options = options
   end
 
-  def operation_succeeded(_record)
+  def succeeded(_record)
     ExternalLogger.log_and_increment(
       {
         action: action,
@@ -18,7 +18,7 @@ class LogAdapter
     )
   end
 
-  def operation_failed(record)
+  def failed(record)
     ExternalLogger.log_and_increment(
       {
         action: action,
