@@ -1,14 +1,15 @@
 class CommandBuilder
-  attr_reader :type, :params
+  attr_reader :port, :type, :params
 
-  def initialize(type, params)
+  def initialize(port, type, params)
+    @port = port
     @type = type
     @params = params
     @adapters = []
   end
 
   def log_adapter
-    @adapters << LogAdapter.new(type, params, actor: ActorFactory.build(type).to_sym)
+    @adapters << LogAdapter.new(type, params, actor: actor)
     self
   end
 
@@ -24,5 +25,11 @@ class CommandBuilder
 
   def build
     CommandFactory.build(type, params, @adapters)
+  end
+
+  private
+
+  def actor
+    ActorFactory.build(port => type).to_sym
   end
 end

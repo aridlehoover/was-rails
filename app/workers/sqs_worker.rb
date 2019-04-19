@@ -21,7 +21,7 @@ class SQSWorker
   end
 
   def command
-    CommandBuilder.new(type, params)
+    CommandBuilder.new(:sqs, type, params)
       .log_adapter
       .sqs_adapter(@sqs_message)
       .build

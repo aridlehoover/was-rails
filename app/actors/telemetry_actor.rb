@@ -1,3 +1,3 @@
 class TelemetryActor < Actor
-  corresponds_to :create_alert
+  corresponds_to sqs: :create_alert
 end

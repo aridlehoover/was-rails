@@ -72,7 +72,7 @@ class RecipientsController < ApplicationController
   end
 
   def create
-    CommandBuilder.new(:create_recipient, recipient_params)
+    CommandBuilder.new(:controller, :create_recipient, recipient_params)
       .log_adapter
       .controller_adapter(self)
       .build
@@ -113,7 +113,7 @@ class RecipientsController < ApplicationController
   end
 
   def destroy
-    CommandBuilder.new(:unsubscribe_recipient, id: id)
+    CommandBuilder.new(:controller, :unsubscribe_recipient, id: id)
       .log_adapter
       .controller_adapter(self)
       .build

@@ -9,7 +9,7 @@ class Source < ApplicationRecord
   end
 
   def import_alerts
-    alerts = parsed_feed_data.items.compact.map { |item| create_alert(item) }
+    alerts = parsed_feed_data.items.compact.map { |item| create_alert_command(item).perform }
     failed_alerts = alerts.reject(&:persisted?)
 
     status = failed_alerts.none? ? :succeeded : :failed
@@ -23,11 +23,10 @@ class Source < ApplicationRecord
 
   private
 
-  def create_alert(item)
-    params = alert_attributes(item)
-    log_adapter = LogAdapter.new(:create_alert, params)
-
-    CreateAlertCommand.new(params, log_adapter).perform
+  def create_alert_command(item)
+    CommandBuilder.new(:rss, :create_alert, alert_attributes(item))
+      .log_adapter
+      .build
   end
 
   def raw_feed_data

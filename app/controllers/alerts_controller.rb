@@ -72,7 +72,7 @@ class AlertsController < ApplicationController
   end
 
   def create
-    CommandBuilder.new(:create_alert, alert_params)
+    CommandBuilder.new(:controller, :create_alert, alert_params)
       .log_adapter
       .controller_adapter(self)
       .build
