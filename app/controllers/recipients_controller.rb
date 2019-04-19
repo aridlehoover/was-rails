@@ -72,10 +72,11 @@ class RecipientsController < ApplicationController
   end
 
   def create
-    log_adapter = LogAdapter.new(:create_recipient, recipient_params, actor: :telecom)
-    controller_adapter = ControllerAdapter.new(self)
-
-    CreateRecipientCommand.new(recipient_params, [log_adapter, controller_adapter]).perform
+    CommandBuilder.new(:create_recipient, recipient_params)
+      .log_adapter
+      .controller_adapter(self)
+      .build
+      .perform
   end
 
   def update
@@ -112,10 +113,11 @@ class RecipientsController < ApplicationController
   end
 
   def destroy
-    log_adapter = LogAdapter.new(:unsubscribe_recipient, {id: id}, actor: :telecom)
-    controller_adapter = ControllerAdapter.new(self)
-
-    UnsubscribeRecipientCommand.new({id: id}, [log_adapter, controller_adapter]).perform
+    CommandBuilder.new(:unsubscribe_recipient, id: id)
+      .log_adapter
+      .controller_adapter(self)
+      .build
+      .perform
   end
 
   private

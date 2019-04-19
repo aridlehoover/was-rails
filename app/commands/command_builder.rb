@@ -17,6 +17,11 @@ class CommandBuilder
     self
   end
 
+  def controller_adapter(controller)
+    @adapters << ControllerAdapter.new(controller)
+    self
+  end
+
   def build
     CommandFactory.build(type, params, @adapters)
   end
