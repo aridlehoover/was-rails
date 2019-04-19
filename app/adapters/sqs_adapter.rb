@@ -11,4 +11,8 @@ class SQSAdapter
 
   def failed(record)
   end
+
+  def not_found
+    message.delete
+  end
 end

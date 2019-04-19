@@ -46,6 +46,11 @@ describe RecipientsController, type: :controller do
         post :create, params: { recipient: valid_attributes }, session: valid_session
         expect(response).to redirect_to(Recipient.last)
       end
+
+      it 'Notifies the user that the record was created' do
+        post :create, params: { recipient: valid_attributes }, session: valid_session
+        expect(controller).to set_flash[:notice].to('Recipient was successfully created.')
+      end
     end
 
     context "with invalid params" do
@@ -73,6 +78,12 @@ describe RecipientsController, type: :controller do
         put :update, params: { id: recipient.to_param, recipient: valid_attributes }, session: valid_session
         expect(response).to redirect_to(recipient)
       end
+
+      it 'Notifies the user that the record was updated' do
+        recipient = Recipient.create! valid_attributes
+        put :update, params: { id: recipient.to_param, recipient: valid_attributes }, session: valid_session
+        expect(controller).to set_flash[:notice].to('Recipient was successfully updated.')
+      end
     end
 
     context "with invalid params" do
@@ -94,6 +105,12 @@ describe RecipientsController, type: :controller do
       recipient = Recipient.create! valid_attributes
       delete :destroy, params: { id: recipient.to_param }, session: valid_session
       expect(response).to redirect_to(recipients_url)
+    end
+
+    it 'Notifies the user that the record was deleted' do
+      recipient = Recipient.create! valid_attributes
+      delete :destroy, params: { id: recipient.to_param }, session: valid_session
+      expect(controller).to set_flash[:notice].to('Recipient was successfully deleted.')
     end
   end
 end

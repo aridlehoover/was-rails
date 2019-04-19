@@ -38,25 +38,9 @@ class SQSWorker
   end
 
   def unsubscribe_recipient
-    recipient = Recipient.find_by(params)
+    log_adapter = LogAdapter.new(:unsubscribe_recipient, params, actor: :telecom)
+    sqs_adapter = SQSAdapter.new(@sqs_message)
 
-    if recipient.present?
-      recipient.destroy
-      ExternalLogger.log_and_increment(
-        action: :unsubscribe_recipient,
-        actor: :telecom,
-        status: :succeeded,
-        params: params
-      )
-    else
-      ExternalLogger.log_and_increment(
-        action: :unsubscribe_recipient,
-        actor: :telecom,
-        status: :not_found,
-        params: params
-      )
-    end
-
-    @sqs_message.delete
+    UnsubscribeRecipientCommand.new(params, [log_adapter, sqs_adapter]).perform
   end
 end

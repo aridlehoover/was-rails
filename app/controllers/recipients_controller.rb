@@ -112,26 +112,10 @@ class RecipientsController < ApplicationController
   end
 
   def destroy
-    @recipient = Recipient.find_by(id: id)
+    log_adapter = LogAdapter.new(:unsubscribe_recipient, id: id)
+    controller_adapter = ControllerAdapter.new(self)
 
-    if @recipient.present?
-      @recipient.destroy
-      ExternalLogger.log_and_increment(
-        action: :destroy_recipient,
-        actor: :administrator,
-        status: :succeeded,
-        params: { id: id }
-      )
-      redirect_to recipients_url, notice: 'Recipient was successfully destroyed.'
-    else
-      ExternalLogger.log_and_increment(
-        action: :destroy_recipient,
-        actor: :administrator,
-        status: :not_found,
-        params: { id: id }
-      )
-      render status: :not_found
-    end
+    UnsubscribeRecipientCommand.new({ id: id }, [log_adapter, controller_adapter]).perform
   end
 
   private
