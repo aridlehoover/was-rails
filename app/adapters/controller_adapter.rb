@@ -1,4 +1,10 @@
 class ControllerAdapter
+  ACTION_PERFORMED = {
+    create: 'created',
+    update: 'updated',
+    destroy: 'destroyed'
+  }.freeze
+
   attr_reader :controller
 
   def initialize(controller)
@@ -8,10 +14,20 @@ class ControllerAdapter
   delegate :redirect_to, :render, to: :controller
 
   def succeeded(record)
-    redirect_to record, notice: "#{record.class.name} was successfully created."
+    redirect_to record, notice: "#{record.class.name} was successfully #{ACTION_PERFORMED[action]}."
   end
 
   def failed(record)
     render :new, locals: { record: record }
+  end
+
+  def not_found
+    render status: :not_found
+  end
+
+  private
+
+  def action
+    controller.params['action']
   end
 end

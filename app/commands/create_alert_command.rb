@@ -1,10 +1,5 @@
-class CreateAlertCommand
-  attr_reader :params, :adapters
-
-  def initialize(params, adapters)
-    @params = params
-    @adapters = Array.wrap(adapters).compact
-  end
+class CreateAlertCommand < Command
+  corresponds_to :create_alert
 
   def perform
     alert = Alert.create(params)

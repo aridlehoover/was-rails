@@ -29,4 +29,15 @@ class LogAdapter
       }.merge(options)
     )
   end
+
+  def not_found
+    ExternalLogger.log_and_increment(
+      {
+        action: action,
+        actor: :administrator,
+        status: :not_found,
+        params: params
+      }.merge(options)
+    )
+  end
 end
