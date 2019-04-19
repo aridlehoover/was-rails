@@ -7,40 +7,35 @@ class SQSWorker
     @sqs_message = sqs_message
     @body = body
 
-    case body['type']
-    when 'create_alert'
-      create_alert
-    when 'create_recipient'
-      create_recipient
-    when 'unsubscribe_recipient'
-      unsubscribe_recipient
-    end
+    command.perform
   end
 
   private
 
+  def type
+    @body['type'].to_sym
+  end
+
   def params
-    @params ||= @body.except('type')
+    @body.except('type')
   end
 
-  def create_alert
-    log_adapter = LogAdapter.new(:create_alert, params, actor: :telemetry)
-    sqs_adapter = SQSAdapter.new(@sqs_message)
-
-    CreateAlertCommand.new(params, [log_adapter, sqs_adapter]).perform
+  def command
+    case type
+    when :create_alert
+      CreateAlertCommand.new(params, [log_adapter(:telemetry), sqs_adapter])
+    when :create_recipient
+      CreateRecipientCommand.new(params, [log_adapter(:telecom), sqs_adapter])
+    when :unsubscribe_recipient
+      UnsubscribeRecipientCommand.new(params, [log_adapter(:telecom), sqs_adapter])
+    end
   end
 
-  def create_recipient
-    log_adapter = LogAdapter.new(:create_recipient, params, actor: :telecom)
-    sqs_adapter = SQSAdapter.new(@sqs_message)
-
-    CreateRecipientCommand.new(params, [log_adapter, sqs_adapter]).perform
+  def sqs_adapter
+    SQSAdapter.new(@sqs_message)
   end
 
-  def unsubscribe_recipient
-    log_adapter = LogAdapter.new(:unsubscribe_recipient, params, actor: :telecom)
-    sqs_adapter = SQSAdapter.new(@sqs_message)
-
-    UnsubscribeRecipientCommand.new(params, [log_adapter, sqs_adapter]).perform
+  def log_adapter(actor)
+    LogAdapter.new(type, params, actor: actor)
   end
 end
