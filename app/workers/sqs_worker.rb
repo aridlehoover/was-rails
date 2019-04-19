@@ -21,9 +21,9 @@ class SQSWorker
   end
 
   def command
-    log_adapter = LogAdapter.new(type, params, actor: ActorFactory.build(type).to_sym)
-    sqs_adapter = SQSAdapter.new(@sqs_message)
-
-    CommandFactory.build(type, params, [log_adapter, sqs_adapter])
+    CommandBuilder.new(type, params)
+      .log_adapter
+      .sqs_adapter(@sqs_message)
+      .build
   end
 end
