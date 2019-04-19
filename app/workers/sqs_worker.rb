@@ -21,21 +21,25 @@ class SQSWorker
   end
 
   def command
-    case type
-    when :create_alert
-      CreateAlertCommand.new(params, [log_adapter(:telemetry), sqs_adapter])
-    when :create_recipient
-      CreateRecipientCommand.new(params, [log_adapter(:telecom), sqs_adapter])
-    when :unsubscribe_recipient
-      UnsubscribeRecipientCommand.new(params, [log_adapter(:telecom), sqs_adapter])
-    end
+    CommandFactory.build(type, params, [log_adapter, sqs_adapter])
+  end
+
+  def log_adapter
+    LogAdapter.new(type, params, actor: actor)
   end
 
   def sqs_adapter
     SQSAdapter.new(@sqs_message)
   end
 
-  def log_adapter(actor)
-    LogAdapter.new(type, params, actor: actor)
+  def actor
+    case type
+    when :create_alert
+      :telemetry
+    when :create_recipient
+      :telecom
+    when :unsubscribe_recipient
+      :telecom
+    end
   end
 end
