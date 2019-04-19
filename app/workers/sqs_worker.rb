@@ -31,24 +31,10 @@ class SQSWorker
   end
 
   def create_recipient
-    recipient = Recipient.create(params)
-    if recipient.persisted?
-      ExternalLogger.log_and_increment(
-        action: :create_recipient,
-        actor: :telecom,
-        status: :succeeded,
-        params: params
-      )
-      @sqs_message.delete
-    else
-      ExternalLogger.log_and_increment(
-        action: :create_recipient,
-        actor: :telecom,
-        status: :failed,
-        params: params,
-        errors: recipient.errors.messages
-      )
-    end
+    log_adapter = LogAdapter.new(:create_recipient, params, actor: :telecom)
+    sqs_adapter = SQSAdapter.new(@sqs_message)
+
+    CreateRecipientCommand.new(params, [log_adapter, sqs_adapter]).perform
   end
 
   def unsubscribe_recipient

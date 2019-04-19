@@ -72,26 +72,10 @@ class RecipientsController < ApplicationController
   end
 
   def create
-    @recipient = Recipient.create(recipient_params)
+    log_adapter = LogAdapter.new(:create_recipient, recipient_params)
+    controller_adapter = ControllerAdapter.new(self)
 
-    if @recipient.persisted?
-      ExternalLogger.log_and_increment(
-        action: :create_recipient,
-        actor: :administrator,
-        status: :succeeded,
-        params: recipient_params.to_h
-      )
-      redirect_to @recipient, notice: 'Recipient was successfully created.'
-    else
-      ExternalLogger.log_and_increment(
-        action: :create_recipient,
-        actor: :administrator,
-        status: :failed,
-        params: recipient_params.to_h,
-        errors: @recipient.errors.messages
-      )
-      render :new
-    end
+    CreateRecipientCommand.new(recipient_params, [log_adapter, controller_adapter]).perform
   end
 
   def update
