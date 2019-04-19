@@ -1,10 +1,5 @@
-class CreateRecipientCommand
-  attr_reader :params, :adapters
-
-  def initialize(params, adapters)
-    @params = params
-    @adapters = Array.wrap(adapters).compact
-  end
+class CreateRecipientCommand < Command
+  corresponds_to :create_recipient
 
   def perform
     recipient = Recipient.create(params)
