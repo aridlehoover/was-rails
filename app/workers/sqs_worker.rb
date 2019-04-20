@@ -30,11 +30,11 @@ class SQSWorker
   def actor
     case type
     when :create_alert
-      :telemetry
+      TelemetryActor.new.to_sym
     when :create_recipient
-      :telecom
+      TelecomActor.new.to_sym
     when :unsubscribe_recipient
-      :telecom
+      TelecomActor.new.to_sym
     end
   end
 end
