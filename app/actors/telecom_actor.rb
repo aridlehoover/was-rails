@@ -1,6 +1,6 @@
 class TelecomActor < Actor
-  corresponds_to :create_recipient
-  corresponds_to :unsubscribe_recipient
+  corresponds_to port: :sqs, command: :create_recipient
+  corresponds_to port: :sqs, command: :unsubscribe_recipient
 
   def to_sym
     :telecom

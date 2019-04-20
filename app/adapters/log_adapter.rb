@@ -3,7 +3,7 @@ class LogAdapter
 
   def initialize(action, params, options = {})
     @action = action
-    @params = params
+    @params = params.to_h
     @options = options
   end
 

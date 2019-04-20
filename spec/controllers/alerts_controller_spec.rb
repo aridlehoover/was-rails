@@ -54,6 +54,10 @@ describe AlertsController, type: :controller do
     context "with valid params" do
       let(:params) { { alert: valid_attributes } }
 
+      before do
+        allow(ExternalLogger).to receive(:log_and_increment)
+      end
+
       it "creates a new Alert" do
         expect { post :create, params: params, session: valid_session }.to change(Alert, :count).by(1)
       end
@@ -61,6 +65,16 @@ describe AlertsController, type: :controller do
       it "redirects to the created alert" do
         post :create, params: params, session: valid_session
         expect(response).to redirect_to(Alert.last)
+      end
+
+      it "logs and increments a create alert action" do
+        post :create, params: params, session: valid_session
+        expect(ExternalLogger).to have_received(:log_and_increment).with(
+          action: :create_alert,
+          actor: :administrator,
+          status: :succeeded,
+          params: params[:alert].stringify_keys
+        )
       end
     end
 
