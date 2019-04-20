@@ -21,20 +21,9 @@ class SQSWorker
   end
 
   def command
-    log_adapter = LogAdapter.new(type, params, actor: actor)
+    log_adapter = LogAdapter.new(type, params, actor: ActorFactory.build(type).to_sym)
     sqs_adapter = SQSAdapter.new(@sqs_message)
 
     CommandFactory.build(type, params, [log_adapter, sqs_adapter])
-  end
-
-  def actor
-    case type
-    when :create_alert
-      TelemetryActor.new.to_sym
-    when :create_recipient
-      TelecomActor.new.to_sym
-    when :unsubscribe_recipient
-      TelecomActor.new.to_sym
-    end
   end
 end
