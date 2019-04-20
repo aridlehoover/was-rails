@@ -4,26 +4,11 @@ class SQSWorker
   shoryuken_options queue: ENV['INPUT_QUEUE_NAME'], body_parser: :json
 
   def perform(sqs_message, body)
-    @sqs_message = sqs_message
-    @body = body
+    type = body.delete('type').to_sym
 
-    command.perform
-  end
-
-  private
-
-  def type
-    @body['type'].to_sym
-  end
-
-  def params
-    @body.except('type')
-  end
-
-  def command
-    log_adapter = LogAdapter.new(type, params, actor: ActorFactory.build(type).to_sym)
-    sqs_adapter = SQSAdapter.new(@sqs_message)
-
-    CommandFactory.build(type, params, [log_adapter, sqs_adapter])
+    CommandBuilder.new(type, body)
+      .sqs(sqs_message)
+      .build
+      .perform
   end
 end
