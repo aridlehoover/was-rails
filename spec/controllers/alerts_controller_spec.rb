@@ -62,6 +62,11 @@ describe AlertsController, type: :controller do
         post :create, params: params, session: valid_session
         expect(response).to redirect_to(Alert.last)
       end
+
+      it 'Notifies the user that the record was created' do
+        post :create, params: { alert: valid_attributes }, session: valid_session
+        expect(controller).to set_flash[:notice].to('Alert was successfully created.')
+      end
     end
 
     context "with invalid params" do
@@ -91,6 +96,11 @@ describe AlertsController, type: :controller do
 
         expect(response).to redirect_to(alert)
       end
+
+      it 'Notifies the user that the record was updated' do
+        put :update, params: { id: alert.to_param, alert: new_attributes }, session: valid_session
+        expect(controller).to set_flash[:notice].to('Alert was successfully updated.')
+      end
     end
 
     context "with invalid params" do
@@ -116,6 +126,11 @@ describe AlertsController, type: :controller do
       delete :destroy, params: params, session: valid_session
 
       expect(response).to redirect_to(alerts_url)
+    end
+
+    it 'Notifies the user that the record was deleted' do
+      delete :destroy, params: { id: alert.to_param }, session: valid_session
+      expect(controller).to set_flash[:notice].to('Alert was successfully destroyed.')
     end
   end
 end

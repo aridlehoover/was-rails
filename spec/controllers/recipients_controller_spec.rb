@@ -46,6 +46,11 @@ describe RecipientsController, type: :controller do
         post :create, params: { recipient: valid_attributes }, session: valid_session
         expect(response).to redirect_to(Recipient.last)
       end
+
+      it 'Notifies the user that the record was created' do
+        post :create, params: { recipient: valid_attributes }, session: valid_session
+        expect(controller).to set_flash[:notice].to('Recipient was successfully created.')
+      end
     end
 
     context "with invalid params" do
@@ -57,27 +62,31 @@ describe RecipientsController, type: :controller do
   end
 
   describe "PUT #update" do
+    let!(:recipient) { Recipient.create! valid_attributes }
+
     context "with valid params" do
       let(:new_attributes) { { address: new_address } }
       let(:new_address) { 'new_address' }
 
       it "updates the requested recipient" do
-        recipient = Recipient.create! valid_attributes
         put :update, params: { id: recipient.to_param, recipient: new_attributes }, session: valid_session
         recipient.reload
         expect(recipient.address).to eq(new_address)
       end
 
       it "redirects to the recipient" do
-        recipient = Recipient.create! valid_attributes
-        put :update, params: { id: recipient.to_param, recipient: valid_attributes }, session: valid_session
+        put :update, params: { id: recipient.to_param, recipient: new_attributes }, session: valid_session
         expect(response).to redirect_to(recipient)
+      end
+
+      it 'Notifies the user that the record was updated' do
+        put :update, params: { id: recipient.to_param, recipient: new_attributes }, session: valid_session
+        expect(controller).to set_flash[:notice].to('Recipient was successfully updated.')
       end
     end
 
     context "with invalid params" do
       it "returns a success response (i.e. to display the 'edit' template)" do
-        recipient = Recipient.create! valid_attributes
         put :update, params: { id: recipient.to_param, recipient: invalid_attributes }, session: valid_session
         expect(response).to be_successful
       end
@@ -85,15 +94,20 @@ describe RecipientsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
+    let!(:recipient) { Recipient.create! valid_attributes }
+
     it "destroys the requested recipient" do
-      recipient = Recipient.create! valid_attributes
       expect { delete :destroy, params: { id: recipient.to_param }, session: valid_session }.to change(Recipient, :count).by(-1)
     end
 
     it "redirects to the recipients list" do
-      recipient = Recipient.create! valid_attributes
       delete :destroy, params: { id: recipient.to_param }, session: valid_session
       expect(response).to redirect_to(recipients_url)
+    end
+
+    it 'Notifies the user that the record was deleted' do
+      delete :destroy, params: { id: recipient.to_param }, session: valid_session
+      expect(controller).to set_flash[:notice].to('Recipient was successfully destroyed.')
     end
   end
 end
