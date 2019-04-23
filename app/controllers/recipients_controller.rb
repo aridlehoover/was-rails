@@ -72,26 +72,10 @@ class RecipientsController < ApplicationController
   end
 
   def create
-    @recipient = Recipient.create(recipient_params)
+    log_adapter = LogAdapter.new(:create_recipient, recipient_params)
+    controller_adapter = ControllerAdapter.new(self)
 
-    if @recipient.persisted?
-      ExternalLogger.log_and_increment(
-        action: :create_recipient,
-        actor: :administrator,
-        status: :succeeded,
-        params: recipient_params.to_h
-      )
-      redirect_to @recipient, notice: 'Recipient was successfully created.'
-    else
-      ExternalLogger.log_and_increment(
-        action: :create_recipient,
-        actor: :administrator,
-        status: :failed,
-        params: recipient_params.to_h,
-        errors: @recipient.errors.messages
-      )
-      render :new
-    end
+    CreateRecipientCommand.new(recipient_params, [log_adapter, controller_adapter]).perform
   end
 
   def update
@@ -128,26 +112,10 @@ class RecipientsController < ApplicationController
   end
 
   def destroy
-    @recipient = Recipient.find_by(id: id)
+    log_adapter = LogAdapter.new(:unsubscribe_recipient, id: id)
+    controller_adapter = ControllerAdapter.new(self)
 
-    if @recipient.present?
-      @recipient.destroy
-      ExternalLogger.log_and_increment(
-        action: :unsubscribe_recipient,
-        actor: :administrator,
-        status: :succeeded,
-        params: { id: id }
-      )
-      redirect_to recipients_url, notice: 'Recipient was successfully destroyed.'
-    else
-      ExternalLogger.log_and_increment(
-        action: :unsubscribe_recipient,
-        actor: :administrator,
-        status: :not_found,
-        params: { id: id }
-      )
-      render status: :not_found
-    end
+    UnsubscribeRecipientCommand.new({ id: id }, [log_adapter, controller_adapter]).perform
   end
 
   private
