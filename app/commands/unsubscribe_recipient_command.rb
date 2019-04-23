@@ -1,10 +1,5 @@
-class UnsubscribeRecipientCommand
-  attr_reader :params, :adapters
-
-  def initialize(params, adapters)
-    @params = params
-    @adapters = Array.wrap(adapters).compact
-  end
+class UnsubscribeRecipientCommand < Command
+  corresponds_to :unsubscribe_recipient
 
   def perform
     recipient = Recipient.find_by(params)

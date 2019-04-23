@@ -6,6 +6,7 @@ ruby '2.5.1'
 gem 'aws-sdk-sqs'
 gem 'bootsnap', '>= 1.1.0', require: false
 gem 'facebook-messenger'
+gem 'industrialist'
 gem 'kaminari'
 gem 'pg', '>= 0.18', '< 2.0'
 gem 'puma', '~> 3.11'
