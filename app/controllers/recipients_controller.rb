@@ -133,7 +133,7 @@ class RecipientsController < ApplicationController
     if @recipient.present?
       @recipient.destroy
       ExternalLogger.log_and_increment(
-        action: :destroy_recipient,
+        action: :unsubscribe_recipient,
         actor: :administrator,
         status: :succeeded,
         params: { id: id }
@@ -141,7 +141,7 @@ class RecipientsController < ApplicationController
       redirect_to recipients_url, notice: 'Recipient was successfully destroyed.'
     else
       ExternalLogger.log_and_increment(
-        action: :destroy_recipient,
+        action: :unsubscribe_recipient,
         actor: :administrator,
         status: :not_found,
         params: { id: id }

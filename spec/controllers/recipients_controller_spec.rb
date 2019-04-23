@@ -137,7 +137,7 @@ describe RecipientsController, type: :controller do
       delete :destroy, params: params, session: valid_session
 
       expect(ExternalLogger).to have_received(:log_and_increment).with(
-        action: :destroy_recipient,
+        action: :unsubscribe_recipient,
         actor: :administrator,
         status: :succeeded,
         params: params
