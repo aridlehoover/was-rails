@@ -75,7 +75,7 @@ class AlertsController < ApplicationController
     log_adapter = LogAdapter.new(:create_alert, alert_params)
     controller_adapter = ControllerAdapter.new(self)
 
-    CreateAlertCommand.new(alert_params, [log_adapter, controller_adapter]).perform
+    CommandFactory.build(:create_alert, alert_params, [log_adapter, controller_adapter]).perform
   end
 
   def update

@@ -75,7 +75,7 @@ class RecipientsController < ApplicationController
     log_adapter = LogAdapter.new(:create_recipient, recipient_params)
     controller_adapter = ControllerAdapter.new(self)
 
-    CreateRecipientCommand.new(recipient_params, [log_adapter, controller_adapter]).perform
+    CommandFactory.build(:create_recipient, recipient_params, [log_adapter, controller_adapter]).perform
   end
 
   def update
@@ -115,7 +115,7 @@ class RecipientsController < ApplicationController
     log_adapter = LogAdapter.new(:unsubscribe_recipient, id: id)
     controller_adapter = ControllerAdapter.new(self)
 
-    UnsubscribeRecipientCommand.new({ id: id }, [log_adapter, controller_adapter]).perform
+    CommandFactory.build(:unsubscribe_recipient, { id: id }, [log_adapter, controller_adapter]).perform
   end
 
   private
