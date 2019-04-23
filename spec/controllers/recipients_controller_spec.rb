@@ -124,29 +124,38 @@ describe RecipientsController, type: :controller do
     let!(:recipient) { Recipient.create! valid_attributes }
     let(:params) { { id: recipient.to_param } }
 
-    it "destroys the requested recipient" do
-      expect { delete :destroy, params: params, session: valid_session }.to change(Recipient, :count).by(-1)
+    context 'when the recipient is found' do
+      it "destroys the requested recipient" do
+        expect { delete :destroy, params: params, session: valid_session }.to change(Recipient, :count).by(-1)
+      end
+
+      it "redirects to the recipients list" do
+        delete :destroy, params: params, session: valid_session
+        expect(response).to redirect_to(recipients_url)
+      end
+
+      it "logs and increments a destroy recipient action" do
+        delete :destroy, params: params, session: valid_session
+
+        expect(ExternalLogger).to have_received(:log_and_increment).with(
+          action: :unsubscribe_recipient,
+          actor: :administrator,
+          status: :succeeded,
+          params: params
+        )
+      end
+
+      it 'Notifies the user that the record was deleted' do
+        delete :destroy, params: params, session: valid_session
+        expect(controller).to set_flash[:notice].to('Recipient was successfully destroyed.')
+      end
     end
 
-    it "redirects to the recipients list" do
-      delete :destroy, params: params, session: valid_session
-      expect(response).to redirect_to(recipients_url)
-    end
-
-    it "logs and increments a destroy recipient action" do
-      delete :destroy, params: params, session: valid_session
-
-      expect(ExternalLogger).to have_received(:log_and_increment).with(
-        action: :unsubscribe_recipient,
-        actor: :administrator,
-        status: :succeeded,
-        params: params
-      )
-    end
-
-    it 'Notifies the user that the record was deleted' do
-      delete :destroy, params: { id: recipient.to_param }, session: valid_session
-      expect(controller).to set_flash[:notice].to('Recipient was successfully destroyed.')
+    context 'when the recipient is NOT found' do
+      it "renders not found" do
+        delete :destroy, params: { id: recipient.id + 1 }, session: valid_session
+        expect(response.status).to eq(404)
+      end
     end
   end
 end

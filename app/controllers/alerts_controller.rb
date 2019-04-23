@@ -130,7 +130,7 @@ class AlertsController < ApplicationController
         status: :not_found,
         params: { id: id }
       )
-      render status: :not_found
+      render status: :not_found, json: {}
     end
   end
 

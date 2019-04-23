@@ -138,30 +138,39 @@ describe AlertsController, type: :controller do
     let!(:alert) { Alert.create! valid_attributes }
     let(:params) { { id: alert.to_param } }
 
-    it "destroys the requested alert" do
-      expect { delete :destroy, params: params, session: valid_session }.to change(Alert, :count).by(-1)
+    context 'when the alert is found' do
+      it "destroys the requested alert" do
+        expect { delete :destroy, params: params, session: valid_session }.to change(Alert, :count).by(-1)
+      end
+
+      it "redirects to the alerts list" do
+        delete :destroy, params: params, session: valid_session
+
+        expect(response).to redirect_to(alerts_url)
+      end
+
+      it "logs and increments a destroy alert action" do
+        delete :destroy, params: params, session: valid_session
+
+        expect(ExternalLogger).to have_received(:log_and_increment).with(
+          action: :destroy_alert,
+          actor: :administrator,
+          status: :succeeded,
+          params: params
+        )
+      end
+
+      it 'Notifies the user that the record was deleted' do
+        delete :destroy, params: { id: alert.to_param }, session: valid_session
+        expect(controller).to set_flash[:notice].to('Alert was successfully destroyed.')
+      end
     end
 
-    it "redirects to the alerts list" do
-      delete :destroy, params: params, session: valid_session
-
-      expect(response).to redirect_to(alerts_url)
-    end
-
-    it "logs and increments a destroy alert action" do
-      delete :destroy, params: params, session: valid_session
-
-      expect(ExternalLogger).to have_received(:log_and_increment).with(
-        action: :destroy_alert,
-        actor: :administrator,
-        status: :succeeded,
-        params: params
-      )
-    end
-
-    it 'Notifies the user that the record was deleted' do
-      delete :destroy, params: { id: alert.to_param }, session: valid_session
-      expect(controller).to set_flash[:notice].to('Alert was successfully destroyed.')
+    context 'when the alert is NOT found' do
+      it "renders not found" do
+        delete :destroy, params: { id: alert.id + 1 }, session: valid_session
+        expect(response.status).to eq(404)
+      end
     end
   end
 end
