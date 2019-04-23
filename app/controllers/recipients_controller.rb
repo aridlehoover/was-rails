@@ -79,36 +79,10 @@ class RecipientsController < ApplicationController
   end
 
   def update
-    @recipient = Recipient.find_by(id: id)
-
-    if @recipient.present?
-      if @recipient.update(recipient_params)
-        ExternalLogger.log_and_increment(
-          action: :update_recipient,
-          actor: :administrator,
-          status: :succeeded,
-          params: params
-        )
-        redirect_to @recipient, notice: 'Recipient was successfully updated.'
-      else
-        ExternalLogger.log_and_increment(
-          action: :update_recipient,
-          actor: :administrator,
-          status: :failed,
-          params: params,
-          errors: @recipient.errors.messages
-        )
-        render :edit
-      end
-    else
-      ExternalLogger.log_and_increment(
-        action: :update_recipient,
-        actor: :administrator,
-        status: :not_found,
-        params: params
-      )
-      render status: :not_found
-    end
+    CommandBuilder.new(:update_recipient, id: id, attributes: recipient_params)
+      .controller(self)
+      .build
+      .perform
   end
 
   def destroy

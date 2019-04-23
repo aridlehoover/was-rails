@@ -7,6 +7,11 @@ class ControllerAdapter
     destroy: 'deleted'
   }.freeze
 
+  ACTION_TEMPLATE = {
+    create: :new,
+    update: :edit
+  }.freeze
+
   def initialize(controller)
     @controller = controller
   end
@@ -18,7 +23,7 @@ class ControllerAdapter
   end
 
   def failed(record)
-    render :new, locals: { record: record }
+    render ACTION_TEMPLATE[action], locals: { record: record }
   end
 
   def not_found
