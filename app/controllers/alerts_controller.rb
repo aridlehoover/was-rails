@@ -87,7 +87,7 @@ class AlertsController < ApplicationController
           action: :update_alert,
           actor: :administrator,
           status: :succeeded,
-          params: params
+          params: alert_params.to_h
         )
         redirect_to @alert, notice: 'Alert was successfully updated.'
       else

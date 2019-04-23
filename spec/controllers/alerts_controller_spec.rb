@@ -6,7 +6,7 @@ describe AlertsController, type: :controller do
   let(:valid_session) { {} }
 
   before do
-    allow(ExternalLogger).to receive(:json)
+    allow(ExternalLogger).to receive(:log_and_increment)
   end
 
   describe "GET #index" do
@@ -63,6 +63,16 @@ describe AlertsController, type: :controller do
         expect(response).to redirect_to(Alert.last)
       end
 
+      it "logs and increments a create alert action" do
+        post :create, params: params, session: valid_session
+        expect(ExternalLogger).to have_received(:log_and_increment).with(
+          action: :create_alert,
+          actor: :administrator,
+          status: :succeeded,
+          params: params[:alert].stringify_keys
+        )
+      end
+
       it 'Notifies the user that the record was created' do
         post :create, params: { alert: valid_attributes }, session: valid_session
         expect(controller).to set_flash[:notice].to('Alert was successfully created.')
@@ -97,6 +107,16 @@ describe AlertsController, type: :controller do
         expect(response).to redirect_to(alert)
       end
 
+      it "logs and increments a update alert action" do
+        post :update, params: params, session: valid_session
+        expect(ExternalLogger).to have_received(:log_and_increment).with(
+          action: :update_alert,
+          actor: :administrator,
+          status: :succeeded,
+          params: params[:alert].stringify_keys
+        )
+      end
+
       it 'Notifies the user that the record was updated' do
         put :update, params: { id: alert.to_param, alert: new_attributes }, session: valid_session
         expect(controller).to set_flash[:notice].to('Alert was successfully updated.')
@@ -126,6 +146,17 @@ describe AlertsController, type: :controller do
       delete :destroy, params: params, session: valid_session
 
       expect(response).to redirect_to(alerts_url)
+    end
+
+    it "logs and increments a destroy alert action" do
+      delete :destroy, params: params, session: valid_session
+
+      expect(ExternalLogger).to have_received(:log_and_increment).with(
+        action: :destroy_alert,
+        actor: :administrator,
+        status: :succeeded,
+        params: params
+      )
     end
 
     it 'Notifies the user that the record was deleted' do

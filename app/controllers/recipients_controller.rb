@@ -103,7 +103,7 @@ class RecipientsController < ApplicationController
           action: :update_recipient,
           actor: :administrator,
           status: :succeeded,
-          params: params
+          params: recipient_params.to_h
         )
         redirect_to @recipient, notice: 'Recipient was successfully updated.'
       else
@@ -111,7 +111,7 @@ class RecipientsController < ApplicationController
           action: :update_recipient,
           actor: :administrator,
           status: :failed,
-          params: params,
+          params: recipient_params.to_h,
           errors: @recipient.errors.messages
         )
         render :edit
@@ -121,7 +121,7 @@ class RecipientsController < ApplicationController
         action: :update_recipient,
         actor: :administrator,
         status: :not_found,
-        params: params
+        params: recipient_params.to_h
       )
       render status: :not_found
     end
